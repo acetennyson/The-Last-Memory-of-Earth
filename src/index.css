@@ -1,13 +1,40 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+  --bg-primary: #080B14;
+  --bg-secondary: #0D1120;
+  --bg-card: #111627;
+  --blue: #6CCBFF;
+  --blue-dim: rgba(108, 203, 255, 0.15);
+  --white: #F5F7FA;
+  --gray: #6B7280;
+  --green: #2EC4B6;
+  --yellow: #E9C46A;
+  --purple: #9B5DE5;
+  --red: #D62839;
+  --orange: #F4A261;
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--white);
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+
+::selection { background: var(--blue-dim); color: var(--blue); }
+
+button {
+  cursor: pointer;
+  font-family: var(--font-sans);
+  border: none;
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 1px solid var(--blue);
+  outline-offset: 2px;
 }
