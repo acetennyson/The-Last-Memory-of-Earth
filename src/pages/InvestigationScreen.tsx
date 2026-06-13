@@ -1,9 +1,9 @@
 import React from 'react';
 import type { GameHook } from '../hooks/useGame';
 import PowerMeter from '../components/PowerMeter';
-import { CorruptionSystem } from '../utils/corruption';
 import ReactMarkdown from 'react-markdown';
 import { parseArchiveBlocks } from '../components/ArchiveBlocks';
+import { historicalContent } from '../data/historicalContent';
 
 const tierColors: Record<string, string> = {
   SURFACE: '#6CCBFF',
@@ -21,20 +21,21 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
           padding: '10px 32px', background: 'transparent', color: '#6CCBFF',
           border: '1px solid rgba(108,203,255,0.25)', borderRadius: 6,
           fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase',
-        }}>Return to Archive</button>
+        }}>
+          Return to Archive
+        </button>
       </div>
     );
   }
 
-  const hasMoreEvidence = game.investigationStep < game.totalInvestigationSteps - 1;
   const showContradictions = game.contradictionsRevealed && game.contradictions.length > 0;
-  const currentEvidence = game.evidenceRecords[game.investigationStep];
 
   return (
     <div style={{
       height: '100vh', display: 'flex', flexDirection: 'column',
-      padding: 24, maxWidth: 640, margin: '0 auto',
+      padding: 24, maxWidth: 1200, margin: '0 auto',
     }}>
+      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <span style={{ fontSize: 10, color: '#6CCBFF', letterSpacing: 2, textTransform: 'uppercase' }}>
           Investigation · {game.investigationStep + 1} / {game.totalInvestigationSteps}
@@ -43,42 +44,100 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        {/* Show all evidence for this memory together to create conflicts */}
-        {game.evidenceRecords.length > 1 && !showContradictions && (
-          <div>
-            <div style={{
-              textAlign: 'center', marginBottom: 24,
-              fontSize: 11, color: '#F4A261', letterSpacing: 2,
-              textTransform: 'uppercase', fontWeight: 600,
+        {/* Carousel-style Evidence Display */}
+        {game.evidenceRecords.length > 0 && !showContradictions && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 20,
+            height: '70vh',
+            padding: '20px 0'
+          }}>
+            {/* Previous Button */}
+            <button
+              onClick={() => game.investigationStep > 0 && game.nextEvidenceStep()}
+              disabled={game.investigationStep === 0}
+              style={{
+                background: 'transparent',
+                border: '2px solid #6CCBFF',
+                color: game.investigationStep === 0 ? '#444' : '#6CCBFF',
+                padding: '12px',
+                borderRadius: '50%',
+                fontSize: '20px',
+                cursor: game.investigationStep === 0 ? 'not-allowed' : 'pointer',
+                opacity: game.investigationStep === 0 ? 0.3 : 1
+              }}
+            >
+              ‹
+            </button>
+
+            {/* Evidence Carousel */}
+            <div style={{ 
+              flex: 1, 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 16,
+              overflow: 'hidden'
             }}>
-              Multiple Sources Found
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {game.evidenceRecords.map((evidence, index) => {
+                const isActive = index === game.investigationStep;
                 const reliabilityColor = evidence.reliability > 80 ? '#2EC4B6' : 
                                        evidence.reliability > 60 ? '#F4A261' : '#D62839';
+                
                 return (
-                  <div key={evidence.id} style={{
-                    background: 'linear-gradient(135deg, #111627 0%, #0D1120 100%)',
-                    border: `1px solid ${reliabilityColor}20`,
-                    borderRadius: 12,
-                    padding: 24,
-                    position: 'relative',
-                  }}>
-                    {/* Reliability, Completeness, Bias indicators */}
+                  <div
+                    key={evidence.id}
+                    style={{
+                      flex: isActive ? '3' : '0.8',
+                      height: isActive ? '500px' : '180px',
+                      background: 'linear-gradient(135deg, #111627 0%, #0D1120 100%)',
+                      border: isActive ? `2px solid ${reliabilityColor}` : '1px solid rgba(108,203,255,0.1)',
+                      borderRadius: '12px',
+                      padding: isActive ? '24px' : '16px',
+                      position: 'relative',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      opacity: isActive ? 1 : 0.6,
+                      transform: isActive ? 'scale(1)' : 'scale(0.9)',
+                      overflow: 'auto'
+                    }}
+                  >
+                    {/* Evidence Tier & Title */}
+                    <div style={{
+                      fontSize: isActive ? 11 : 9,
+                      color: tierColors[evidence.tier] || '#6B7280',
+                      fontWeight: 600,
+                      letterSpacing: 1,
+                      textTransform: 'uppercase',
+                      marginBottom: 8
+                    }}>
+                      {evidence.tier} Evidence
+                    </div>
+                    
+                    <div style={{
+                      fontSize: isActive ? 14 : 10,
+                      color: '#D1D5DB',
+                      marginBottom: 12,
+                      fontWeight: isActive ? 600 : 400
+                    }}>
+                      {evidence.title}
+                    </div>
+
+                    {/* Reliability/Completeness/Bias indicators */}
                     <div style={{
                       position: 'absolute',
                       top: 12,
                       right: 12,
                       display: 'flex',
-                      gap: 8,
+                      gap: isActive ? 8 : 4,
+                      flexDirection: isActive ? 'row' : 'column'
                     }}>
                       <div style={{
                         background: reliabilityColor,
                         color: '#000',
-                        padding: '4px 8px',
+                        padding: isActive ? '4px 8px' : '2px 4px',
                         borderRadius: 4,
-                        fontSize: 10,
+                        fontSize: isActive ? 10 : 8,
                         fontWeight: 700,
                       }}>
                         REL: {evidence.reliability}%
@@ -87,9 +146,9 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
                         background: evidence.completeness > 80 ? '#2EC4B6' : 
                                    evidence.completeness > 60 ? '#F4A261' : '#D62839',
                         color: '#000',
-                        padding: '4px 8px',
+                        padding: isActive ? '4px 8px' : '2px 4px',
                         borderRadius: 4,
-                        fontSize: 10,
+                        fontSize: isActive ? 10 : 8,
                         fontWeight: 700,
                       }}>
                         COM: {evidence.completeness}%
@@ -98,110 +157,73 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
                         background: evidence.bias < 20 ? '#2EC4B6' : 
                                    evidence.bias < 50 ? '#F4A261' : '#D62839',
                         color: '#000',
-                        padding: '4px 8px',
+                        padding: isActive ? '4px 8px' : '2px 4px',
                         borderRadius: 4,
-                        fontSize: 10,
+                        fontSize: isActive ? 10 : 8,
                         fontWeight: 700,
                       }}>
                         BIAS: {evidence.bias}%
                       </div>
                     </div>
-                    
-                    <div style={{
-                      fontSize: 11, 
-                      color: tierColors[evidence.tier] || '#6B7280',
-                      fontWeight: 600, 
-                      letterSpacing: 1, 
-                      textTransform: 'uppercase', 
-                      marginBottom: 4,
-                    }}>
-                      {evidence.tier} Evidence
-                    </div>
-                    <div style={{ 
-                      fontSize: 12, 
-                      color: '#6B7280', 
-                      marginBottom: 16,
-                      paddingRight: 60, // Space for reliability badge
-                    }}>
-                      {CorruptionSystem.corruptTitle(evidence.title, Math.max(0, 3 - (evidence.reliability / 30)))}
-                    </div>
-                    <div style={{
-                      fontSize: 14, 
-                      color: '#D1D5DB', 
-                      lineHeight: 1.8,
-                      fontFamily: "'SF Mono','Fira Code',monospace",
-                      padding: 16, 
-                      background: 'rgba(0,0,0,0.2)', 
-                      borderRadius: 8,
-                      overflowY: 'auto',
-                      maxHeight: '400px',
-                    }}>
-                      {React.createElement(ReactMarkdown, {
-                        children: parseArchiveBlocks(CorruptionSystem.corruptEvidence(evidence.content, evidence.reliability))
-                      })}
-                    </div>
-                    
-                    {/* Source credibility indicator */}
-                    <div style={{
-                      marginTop: 12,
-                      fontSize: 10,
-                      color: '#6B7280',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                    }}>
-                      <span>Source: {evidence.sourceType.replace(/_/g, ' ')}</span>
-                      <span>Completeness: {evidence.completeness}%</span>
-                    </div>
+
+                    {/* Content - only show full content for active item */}
+                    {isActive && (
+                      <div style={{
+                        fontSize: 12,
+                        color: '#D1D5DB',
+                        lineHeight: 1.6,
+                        fontFamily: "'SF Mono','Fira Code',monospace",
+                        marginTop: 16,
+                        maxHeight: '350px',
+                        overflowY: 'auto'
+                      }}>
+                        {React.createElement(ReactMarkdown, {
+                          children: parseArchiveBlocks(evidence.content)
+                        })}
+                      </div>
+                    )}
+
+                    {/* Thumbnail preview for inactive items */}
+                    {!isActive && (
+                      <div style={{
+                        fontSize: 8,
+                        color: '#6B7280',
+                        lineHeight: 1.4,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 6,
+                        WebkitBoxOrient: 'vertical'
+                      }}>
+                        {evidence.content.substring(0, 200)}...
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
-            
-            {/* Analysis prompt */}
-            <div style={{
-              marginTop: 20,
-              padding: 16,
-              background: 'rgba(108,203,255,0.05)',
-              border: '1px solid rgba(108,203,255,0.15)',
-              borderRadius: 8,
-              fontSize: 12,
-              color: '#9CA3AF',
-              fontStyle: 'italic',
-              textAlign: 'center',
-            }}>
-              These sources present different versions of the same events. 
-              What really happened?
-            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={() => game.investigationStep < game.evidenceRecords.length - 1 && game.nextEvidenceStep()}
+              disabled={game.investigationStep >= game.evidenceRecords.length - 1}
+              style={{
+                background: 'transparent',
+                border: '2px solid #6CCBFF',
+                color: game.investigationStep >= game.evidenceRecords.length - 1 ? '#444' : '#6CCBFF',
+                padding: '12px',
+                borderRadius: '50%',
+                fontSize: '20px',
+                cursor: game.investigationStep >= game.evidenceRecords.length - 1 ? 'not-allowed' : 'pointer',
+                opacity: game.investigationStep >= game.evidenceRecords.length - 1 ? 0.3 : 1
+              }}
+            >
+              ›
+            </button>
           </div>
         )}
 
-        {/* Single evidence view for cases with only one source */}
-        {game.evidenceRecords.length === 1 && !showContradictions && (
-          <div style={{
-            background: 'linear-gradient(135deg, #111627 0%, #0D1120 100%)',
-            border: '1px solid rgba(108,203,255,0.1)',
-            borderRadius: 12,
-            padding: 28,
-          }}>
-            <div style={{
-              fontSize: 11, color: tierColors[currentEvidence.tier] || '#6B7280',
-              fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4,
-            }}>
-              {currentEvidence.tier} Evidence
-            </div>
-            <div style={{ fontSize: 12, color: '#6B7280', marginBottom: 16 }}>
-              {currentEvidence.sourceType.replace(/_/g, ' ')} · Reliability: {currentEvidence.reliability}%
-            </div>
-            <p style={{
-              fontSize: 14, color: '#D1D5DB', lineHeight: 1.8,
-              fontFamily: "'SF Mono','Fira Code',monospace",
-              padding: 16, background: 'rgba(0,0,0,0.2)', borderRadius: 8,
-            }}>
-              {currentEvidence.content}
-            </p>
-          </div>
-        )}
-
+        {/* Contradictions */}
         {showContradictions && (
           <div>
             <div style={{
@@ -215,66 +237,31 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
               <div key={c.id} style={{
                 background: 'rgba(244,162,97,0.06)',
                 border: '1px solid rgba(244,162,97,0.2)',
-                borderRadius: 8, padding: 20, marginBottom: 12,
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 12,
               }}>
-                <div style={{ fontSize: 12, color: '#F4A261', fontWeight: 600, marginBottom: 8 }}>
-                  {c.contradictionType.replace(/_/g, ' ')}
-                </div>
-                <p style={{ fontSize: 13, color: '#D1D5DB', lineHeight: 1.7 }}>
+                <div style={{ fontSize: 12, color: '#F4A261', fontWeight: 600 }}>
                   {c.explanation}
-                </p>
-                <div style={{ marginTop: 12, fontSize: 11, color: '#6B7280', fontStyle: 'italic' }}>
-                  Severity: {c.severity}/5
                 </div>
               </div>
             ))}
           </div>
         )}
+      </div>
 
-        <div style={{ textAlign: 'center', marginTop: 28 }}>
-          {hasMoreEvidence && (
-            <button
-              onClick={game.nextEvidenceStep}
-              style={{
-                padding: '10px 40px', background: 'transparent', color: '#6CCBFF',
-                border: '1px solid rgba(108,203,255,0.25)', borderRadius: 6,
-                fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,203,255,0.1)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-            >
-              Continue
-            </button>
-          )}
-          {!hasMoreEvidence && game.contradictions.length > 0 && game.evidenceRecords.length > 0 && !game.contradictionsRevealed && (
-            <button
-              onClick={game.nextEvidenceStep}
-              style={{
-                padding: '10px 40px', background: 'transparent', color: '#F4A261',
-                border: '1px solid rgba(244,162,97,0.3)', borderRadius: 6,
-                fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(244,162,97,0.1)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-            >
-              Review Contradictions
-            </button>
-          )}
-          {(showContradictions || (game.contradictions.length === 0 && !hasMoreEvidence) || game.evidenceRecords.length === 0) && (
-            <button
-              onClick={game.backFromInvestigation}
-              style={{
-                padding: '10px 40px', background: 'transparent', color: '#6CCBFF',
-                border: '1px solid rgba(108,203,255,0.25)', borderRadius: 6,
-                fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,203,255,0.1)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-            >
-              Return to Archive
-            </button>
-          )}
-        </div>
+      {/* Bottom Actions */}
+      <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 20 }}>
+        <button
+          onClick={game.backFromInvestigation}
+          style={{
+            padding: '10px 40px', background: 'transparent', color: '#6CCBFF',
+            border: '1px solid rgba(108,203,255,0.25)', borderRadius: 6,
+            fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase',
+          }}
+        >
+          Return to Archive
+        </button>
       </div>
     </div>
   );
