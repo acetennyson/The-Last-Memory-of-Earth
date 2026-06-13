@@ -233,7 +233,7 @@ export default function ArchiveScreen({ game, memories }: { game: GameHook, memo
                              index % 4 === 1 ? 'var(--cyber-accent)' : 
                              index % 4 === 2 ? 'var(--cyber-secondary)' : 'var(--cyber-warning)',
                     }}>
-                      {CorruptionSystem.corruptText(memory.title, 1)}
+                      {CorruptionSystem.corruptText(memory.title, memory.corruptionScore || 0)}
                     </h3>
                     
                     <div style={{
@@ -254,7 +254,7 @@ export default function ArchiveScreen({ game, memories }: { game: GameHook, memo
                       marginBottom: 16,
                       color: 'var(--cyber-text)',
                     }}>
-                      {CorruptionSystem.corruptText(memory.summary.substring(0, 120), 1)}...
+                      {CorruptionSystem.corruptText(memory.summary.substring(0, 120), memory.corruptionScore || 0)}...
                     </div>
 
                     {/* Stats Bar - Manga Style */}

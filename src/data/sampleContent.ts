@@ -1,7 +1,7 @@
 import type { GameContent } from '../engine';
-import { narrativeContent } from './narrativeContent';
+import { historicalContent } from './historicalContent';
 
-export const sampleContent: GameContent = narrativeContent;
+export const sampleContent: GameContent = historicalContent;
 
 export interface MemoryLink {
   from: string;
@@ -31,6 +31,6 @@ export const memoryConnections: MemoryLink[] = [
 ];
 
 export const memoryIndex: Record<string, number> = {};
-narrativeContent.memories.forEach((m, i) => { 
+historicalContent.memories.forEach((m, i) => { 
   memoryIndex[m.id] = i + 1; 
 });

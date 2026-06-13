@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { GameHook } from '../hooks/useGame';
 import PowerMeter from '../components/PowerMeter';
 import SignalReconstruction from '../components/SignalReconstruction';
@@ -8,8 +8,8 @@ import MatrixBackground from '../components/MatrixBackground';
 import '../styles/cyber.css';
 
 export default function MemoryScreen({ game }: { game: GameHook }) {
-  const [showReconstruction, setShowReconstruction] = useState(false);
-  const [showPathSelection, setShowPathSelection] = useState(false);
+  const [showReconstruction, setShowReconstruction] = React.useState(false);
+  const [showPathSelection, setShowPathSelection] = React.useState(false);
   
   const memory = game.memory;
 
@@ -178,7 +178,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                 lineHeight: 1.2,
                 textShadow: '0 0 20px currentColor',
               }}>
-                {CorruptionSystem.corruptText(memory.title, 1)}
+                {CorruptionSystem.corruptText(memory.title, memory.corruptionScore || 0)}
               </h1>
               
               <div style={{
@@ -204,7 +204,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                 color: 'var(--cyber-text)',
                 fontFamily: '"Share Tech Mono", monospace',
               }}>
-                {CorruptionSystem.corruptText(memory.summary, 1)}
+                {CorruptionSystem.corruptText(memory.summary, memory.corruptionScore || 0)}
               </div>
             </div>
 
@@ -252,7 +252,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                 </div>
               </div>
               
-              <div className="cyber-terminal" style={{
+              <div className="cyber-terminal memory-content" style={{
                 fontSize: 12,
                 lineHeight: 1.6,
                 background: 'rgba(0, 0, 0, 0.6)',
@@ -332,7 +332,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                 
                 <div style={{ display: 'grid', gap: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 11, color: 'var(--cyber-text-dim)' }}>Truth Score:</span>
+                    <span style={{ fontSize: 11, color: 'var(--cyber-text-dim)' }}>Trust Score:</span>
                     <span style={{ 
                       fontSize: 11, 
                       fontWeight: 600,
@@ -465,7 +465,7 @@ function getArtifactIcon(type?: string): string {
 }
 
 function getArtifactContent(memory: any): string {
-  const base = memory.summary || memory.description || 'Fragment data corrupted';
+  const base = memory.description || memory.summary || 'Fragment data corrupted';
   
   const contentMap: Record<string, (summary: string) => string> = {
     SCIENTIFIC_REPORT: (s) => `Research File: ${memory.title}\\nClassification: Public Domain\\nSummary: ${s}`,

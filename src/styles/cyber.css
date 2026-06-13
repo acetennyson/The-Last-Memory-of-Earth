@@ -382,3 +382,31 @@ html, body {
   z-index: -1;
   opacity: 0.1;
 }
+
+/* Memory content markdown styles */
+.memory-content h1 {
+  color: #00ff41 !important;
+  text-shadow: 0 0 10px rgba(0,255,65,0.5) !important;
+}
+
+.memory-content h2 {
+  color: #00ccff !important; 
+  text-shadow: 0 0 8px rgba(0,204,255,0.5) !important;
+}
+
+.memory-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 4px !important;
+  margin: 12px 0 !important;
+}
+
+.memory-content video {
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 12px 0 !important;
+}
+
+.memory-content p {
+  margin-bottom: 16px !important;
+}
