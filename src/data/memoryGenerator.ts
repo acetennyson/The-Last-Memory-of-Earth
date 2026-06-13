@@ -1,7 +1,7 @@
-import type { Memory, Evidence, Contradiction } from '../engine';
+import type { Memory/* , Evidence, Contradiction */ } from '../engine';
 import { 
   MemoryCategory, MemoryRarity, MemoryDifficulty, DecisionWeight, 
-  ArtifactType, MemoryArchetype, EvidenceSource, EvidenceTier, ContradictionType 
+  ArtifactType, MemoryArchetype, /* EvidenceSource, EvidenceTier, ContradictionType */ 
 } from '../engine';
 
 // Memory templates for generating varied content

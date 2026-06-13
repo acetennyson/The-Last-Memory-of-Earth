@@ -1,5 +1,5 @@
 import type { GameContent } from '../engine';
-import { MemoryCategory, MemoryRarity, MemoryDifficulty, DecisionWeight, ArtifactType, MemoryArchetype, EvidenceSource, EvidenceTier, ContradictionType } from '../engine';
+import { MemoryCategory, MemoryRarity, MemoryDifficulty, DecisionWeight, ArtifactType, MemoryArchetype, EvidenceSource, EvidenceTier, /* ContradictionType */ } from '../engine';
 
 // Real Historical Human Events and Stories
 export const historicalContent: GameContent = {
