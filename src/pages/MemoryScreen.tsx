@@ -7,6 +7,7 @@ import { CorruptionSystem } from '../utils/corruption';
 import MatrixBackground from '../components/MatrixBackground';
 import ReactMarkdown from 'react-markdown';
 import { parseArchiveBlocks } from '../components/ArchiveBlocks';
+import { historicalContent } from '../data/historicalContent';
 import '../styles/cyber.css';
 
 export default function MemoryScreen({ game }: { game: GameHook }) {
@@ -34,6 +35,9 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
     // Don't render memory content, let the investigation start
     game.investigateWithPath(pathId);
   };
+
+  // Check if memory has evidence available for investigation
+  const hasEvidence = memory ? historicalContent.evidence.some((e: any) => e.memoryId === memory.id) : false;
 
   const handleCancel = () => {
     setShowPathSelection(false);
@@ -385,7 +389,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                   textTransform: 'uppercase',
                   letterSpacing: 1,
                 }}>
-                  DEEP SCAN AVAILABLE
+                  {hasEvidence ? 'DEEP SCAN AVAILABLE' : 'NO INVESTIGATION DATA'}
                 </div>
                 
                 <div style={{
@@ -394,26 +398,38 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                   lineHeight: 1.6,
                   color: 'var(--cyber-text)',
                 }}>
-                  Neural pattern analysis indicates recoverable data fragments.
-                  <br />
-                  <span className="cyber-text--warning">⚠ Investigation consumes power reserves</span>
+                  {hasEvidence ? (
+                    <>
+                      Neural pattern analysis indicates recoverable data fragments.
+                      <br />
+                      <span className="cyber-text--warning">⚠ Investigation consumes power reserves</span>
+                    </>
+                  ) : (
+                    <>
+                      Memory integrity insufficient for data recovery.
+                      <br />
+                      <span style={{ color: '#666' }}>Archive fragmentation too severe</span>
+                    </>
+                  )}
                 </div>
                 
-                <button
-                  className="cyber-button"
-                  onClick={handleInvestigateClick}
-                  style={{
-                    width: '100%',
-                    padding: '16px',
-                    fontSize: 12,
-                    fontWeight: 900,
-                    background: 'linear-gradient(135deg, rgba(0, 255, 159, 0.3) 0%, rgba(0, 255, 159, 0.1) 100%)',
-                    boxShadow: '0 0 30px var(--cyber-primary)',
-                    marginBottom: '16px',
-                  }}
-                >
-                  🔍 INITIATE DEEP SCAN
-                </button>
+                {hasEvidence && (
+                  <button
+                    className="cyber-button"
+                    onClick={handleInvestigateClick}
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      fontSize: 12,
+                      fontWeight: 900,
+                      background: 'linear-gradient(135deg, rgba(0, 255, 159, 0.3) 0%, rgba(0, 255, 159, 0.1) 100%)',
+                      boxShadow: '0 0 30px var(--cyber-primary)',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    🔍 INITIATE DEEP SCAN
+                  </button>
+                )}
 
                 {/* Memory Decision Buttons */}
                 <div style={{
