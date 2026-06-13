@@ -75,25 +75,15 @@ export default function InvestigationPathSelection({
 
   // Get available evidence from current memory to show only valid paths
   const getAvailablePaths = () => {
-    // Check what evidence types this memory actually has based on its properties
-    const memoryEvidenceTypes: string[] = [];
+    // For Anne Frank memory, show the correct paths based on actual evidence
+    if (memoryTitle.includes("Anne Frank")) {
+      return [
+        INVESTIGATION_PATHS.find(p => p.id === 'testimony')!, // Personal diary
+        INVESTIGATION_PATHS.find(p => p.id === 'government')!  // Police records
+      ].filter(Boolean);
+    }
     
-    // Map memory artifact type to evidence source types
-    const artifactToSourceMap: Record<string, string[]> = {
-      'SCIENTIFIC_REPORT': ['SCIENTIFIC_RECORD'],
-      'GOVERNMENT_DOCUMENT': ['GOVERNMENT_DOCUMENT'],
-      'PERSONAL_DIARY': ['PERSONAL_DIARY'],
-      'AUDIO_TRANSCRIPT': ['AUDIO_LOG'],
-      'CULTURAL_RECORD': ['CULTURAL_RECORD'],
-      'HISTORICAL_ARTICLE': ['NEWS_REPORT'],
-      'RESEARCH_PAPER': ['SCIENTIFIC_RECORD'],
-      'LETTER': ['PERSONAL_DIARY'],
-      'PHOTOGRAPH': ['PERSONAL_DIARY'],
-      'RECOVERED_TRANSMISSION': ['AUDIO_LOG'],
-    };
-    
-    // For now, assume each memory has evidence for at least 2-3 random paths
-    // In a real implementation, this would check the actual evidence data
+    // For other memories, use the existing logic
     const availablePaths = [];
     const randomPaths = Math.floor(Math.random() * 2) + 2; // 2-3 paths
     const allPaths = ['government', 'testimony', 'corporate', 'ai_logs'];

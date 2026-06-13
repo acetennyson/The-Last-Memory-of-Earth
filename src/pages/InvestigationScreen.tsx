@@ -1,6 +1,9 @@
+import React from 'react';
 import type { GameHook } from '../hooks/useGame';
 import PowerMeter from '../components/PowerMeter';
 import { CorruptionSystem } from '../utils/corruption';
+import ReactMarkdown from 'react-markdown';
+import { parseArchiveBlocks } from '../components/ArchiveBlocks';
 
 const tierColors: Record<string, string> = {
   SURFACE: '#6CCBFF',
@@ -62,19 +65,46 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
                     padding: 24,
                     position: 'relative',
                   }}>
-                    {/* Reliability indicator */}
+                    {/* Reliability, Completeness, Bias indicators */}
                     <div style={{
                       position: 'absolute',
                       top: 12,
                       right: 12,
-                      background: reliabilityColor,
-                      color: '#000',
-                      padding: '4px 8px',
-                      borderRadius: 4,
-                      fontSize: 10,
-                      fontWeight: 700,
+                      display: 'flex',
+                      gap: 8,
                     }}>
-                      {evidence.reliability}%
+                      <div style={{
+                        background: reliabilityColor,
+                        color: '#000',
+                        padding: '4px 8px',
+                        borderRadius: 4,
+                        fontSize: 10,
+                        fontWeight: 700,
+                      }}>
+                        REL: {evidence.reliability}%
+                      </div>
+                      <div style={{
+                        background: evidence.completeness > 80 ? '#2EC4B6' : 
+                                   evidence.completeness > 60 ? '#F4A261' : '#D62839',
+                        color: '#000',
+                        padding: '4px 8px',
+                        borderRadius: 4,
+                        fontSize: 10,
+                        fontWeight: 700,
+                      }}>
+                        COM: {evidence.completeness}%
+                      </div>
+                      <div style={{
+                        background: evidence.bias < 20 ? '#2EC4B6' : 
+                                   evidence.bias < 50 ? '#F4A261' : '#D62839',
+                        color: '#000',
+                        padding: '4px 8px',
+                        borderRadius: 4,
+                        fontSize: 10,
+                        fontWeight: 700,
+                      }}>
+                        BIAS: {evidence.bias}%
+                      </div>
                     </div>
                     
                     <div style={{
@@ -95,7 +125,7 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
                     }}>
                       {CorruptionSystem.corruptTitle(evidence.title, Math.max(0, 3 - (evidence.reliability / 30)))}
                     </div>
-                    <p style={{
+                    <div style={{
                       fontSize: 14, 
                       color: '#D1D5DB', 
                       lineHeight: 1.8,
@@ -103,9 +133,13 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
                       padding: 16, 
                       background: 'rgba(0,0,0,0.2)', 
                       borderRadius: 8,
+                      overflowY: 'auto',
+                      maxHeight: '400px',
                     }}>
-                      "{CorruptionSystem.corruptEvidence(evidence.content, evidence.reliability)}"
-                    </p>
+                      {React.createElement(ReactMarkdown, {
+                        children: parseArchiveBlocks(CorruptionSystem.corruptEvidence(evidence.content, evidence.reliability))
+                      })}
+                    </div>
                     
                     {/* Source credibility indicator */}
                     <div style={{

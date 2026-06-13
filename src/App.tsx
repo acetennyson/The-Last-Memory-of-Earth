@@ -13,9 +13,9 @@ import AmbientBackground from './components/AmbientBackground';
 import './styles/cyber.css';
 
 export default function App() {
-  const game = useGame(sampleContent);
+  const game = useGame();
 
-  const screens: Record<number, React.ReactNode> = {
+  const screens: Record<string, React.ReactNode> = {
     [game.Stage.BOOT]: <BootScreen onComplete={game.boot} />,
     [game.Stage.INTRO]: <IntroScreen onStart={game.start} />,
     [game.Stage.ARCHIVE]: <ArchiveScreen game={game} memories={sampleContent.memories} />,
@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <div className="cyber-container">
-      {screens[game.stage] || null}
+      {screens[game.stage as string] || null}
     </div>
   );
 }

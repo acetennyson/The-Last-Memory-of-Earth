@@ -5,6 +5,8 @@ import SignalReconstruction from '../components/SignalReconstruction';
 import InvestigationPathSelection from '../components/InvestigationPathSelection';
 import { CorruptionSystem } from '../utils/corruption';
 import MatrixBackground from '../components/MatrixBackground';
+import ReactMarkdown from 'react-markdown';
+import { parseArchiveBlocks } from '../components/ArchiveBlocks';
 import '../styles/cyber.css';
 
 export default function MemoryScreen({ game }: { game: GameHook }) {
@@ -131,6 +133,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
           display: 'grid',
           gridTemplateColumns: '2fr 1fr',
           gap: 0,
+          height: 'calc(100vh - 120px)',
         }}>
           
           {/* Left Panel - Story Content */}
@@ -257,8 +260,12 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                 lineHeight: 1.6,
                 background: 'rgba(0, 0, 0, 0.6)',
                 marginTop: 16,
+                overflowY: 'auto',
+                maxHeight: 'calc(100vh - 300px)',
               }}>
-                {CorruptionSystem.corruptText(getArtifactContent(memory), memory.corruptionScore || 0)}
+                {React.createElement(ReactMarkdown, {
+                  children: parseArchiveBlocks(CorruptionSystem.corruptText(getArtifactContent(memory), memory.corruptionScore || 0))
+                })}
               </div>
             </div>
           </div>

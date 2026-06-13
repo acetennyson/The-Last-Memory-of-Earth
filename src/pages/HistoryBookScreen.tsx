@@ -76,10 +76,10 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
     content += `• Memories Released: ${game.discardedCount}\n`;
     content += `• Total Investigated: ${game.processed}\n\n`;
     
-    book.chapters.forEach((chapter, i) => {
+    book.chapters.forEach((chapter: any, i: number) => {
       content += `CHAPTER ${i + 1}: ${chapter.title.toUpperCase()}\n`;
       content += `${chapter.summary}\n\n`;
-      chapter.paragraphs.forEach(paragraph => {
+      chapter.paragraphs.forEach((paragraph: any) => {
         content += `${paragraph}\n\n`;
       });
       content += `───────────────────────────────────────\n\n`;

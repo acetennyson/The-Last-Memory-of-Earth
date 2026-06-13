@@ -104,7 +104,7 @@ export default function EndingScreen({ game }: { game: GameHook }) {
   const { civilization: civ } = game.ending;
   const civName = civ.civilization.civilizationName || 'Unknown Civilization';
   const values = civ.civilization.values;
-  const sorted = Object.entries(values).sort(([, a], [, b]) => b - a);
+  const sorted = Object.entries(values).sort(([, a], [, b]) => (b as number) - (a as number));
   const coreValues = sorted.slice(0, 3);
 
   return (

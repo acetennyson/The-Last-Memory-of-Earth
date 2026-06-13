@@ -8,7 +8,51 @@ export const historicalContent: GameContent = {
     {
       id: 'mem_ww2_001', title: 'Anne Frank\'s Last Diary Entry',
       summary: 'The final diary entry of Anne Frank before her family was discovered in their Amsterdam hiding place. A young girl\'s hope confronting unimaginable darkness.',
-      description: 'On August 1, 1944, Anne Frank wrote her last diary entry: "In spite of everything I still believe that people are really good at heart." Three days later, Nazi police discovered their secret annex. Her words became humanity\'s testament to hope in the face of evil.',
+      description: `# Anne Frank's Final Diary Entry
+## July 15, 1944
+
+In the cramped confines of the Secret Annex at 263 Prinsengracht, Amsterdam, fifteen-year-old Anne Frank penned what would become one of her final diary entries. Twenty days later, the Nazi police would discover their hiding place, ending over two years of concealment that had begun in July 1942.
+
+## The Entry
+
+*"In spite of everything, I still believe that people are really good at heart. It's utterly impossible for me to build my life on a foundation of chaos, suffering and death. I see the world being slowly transformed into a wilderness, I hear the approaching thunder that, one day, will destroy us too, I feel the suffering of millions."*
+
+The words, addressed to her imaginary friend "Kitty," represent an extraordinary testament to human hope in the face of systematic persecution. Written in Dutch, the entry demonstrates remarkable philosophical maturity for a teenager who had spent over half her adolescence in hiding.
+
+## Historical Context
+
+### The Secret Annex
+The Frank family, along with four others, had been concealed behind a movable bookcase in the upper floors of Otto Frank's business premises. The hiding place, known as the Achterhuis (back house), measured approximately 450 square feet across multiple rooms.
+
+### Daily Life in Hiding
+Anne's diary reveals the psychological toll of confinement:
+- Strict silence during business hours
+- Rationed food and limited hygiene facilities  
+- Constant fear of discovery
+- Educational activities continued in secret
+
+## Literary Analysis
+
+Anne's writing evolved from typical adolescent concerns to profound reflections on human nature, suffering, and hope. Her final entries demonstrate moral complexity, existential questioning, and unwavering optimism despite overwhelming evidence to the contrary.
+
+## The Arrest
+
+On August 4, 1944, Dutch police led by Sergeant Abraham Kaper raided the Secret Annex following an anonymous tip. All eight occupants, along with two helpers, were arrested and eventually deported to concentration camps.
+
+## Historical Significance
+
+Anne Frank's diary serves as primary source documentation of daily life during Nazi occupation, a psychological record of adolescent development under extreme stress, and a moral testament to humanity's capacity for hope amid brutality.
+
+The final entry's message—that people are "really good at heart"—remains one of history's most powerful affirmations of faith in human nature, written by someone who had every reason to believe otherwise.
+
+:::confidence 95:::
+
+## External References
+
+- [Anne Frank House Virtual Tour](https://www.annefrank.org/en/anne-frank/secret-annex/)
+- [Liberation Footage Archive](https://collections.ushmm.org/search/catalog/irn1003481)
+
+*Document Status: Complete | Source Reliability: Extremely High*`,
       category: MemoryCategory.FAMILY, rarity: MemoryRarity.LEGENDARY, difficulty: MemoryDifficulty.LEVEL_4, decisionWeight: DecisionWeight.CRITICAL,
       archetype: MemoryArchetype.SACRIFICE, artifactType: ArtifactType.PERSONAL_DIARY,
       impact: { compassion: 9, progress: 2, truth: 8, freedom: 7, power: -5, legacy: 10 },
@@ -129,8 +173,149 @@ export const historicalContent: GameContent = {
   evidence: [
     {
       id: 'ev_ww2_001', memoryId: 'mem_ww2_001', title: 'Anne Frank\'s Original Diary Entry',
-      content: 'August 1, 1944 - "It\'s really a wonder that I haven\'t dropped all my ideals, because they seem so absurd and impossible to carry out. Yet I keep them, because in spite of everything I still believe that people are really good at heart."',
+      content: `# Personal Diary Entry
+## Recovered Document Fragment
+
+**Source**: Anne Frank's Personal Diary  
+**Date**: August 1, 1944  
+**Location**: Secret Annex, Amsterdam  
+**Document Type**: Handwritten diary entry in Dutch
+
+---
+
+### Original Text (Dutch)
+*"Het is werkelijk een wonder dat ik niet al mijn idealen heb laten vallen, omdat ze zo absurd en onuitvoerbaar lijken. Toch houd ik ze vast, omdat ik ondanks alles nog steeds geloof dat mensen eigenlijk goed zijn."*
+
+### English Translation
+*"It's really a wonder that I haven't dropped all my ideals, because they seem so absurd and impossible to carry out. Yet I keep them, because in spite of everything I still believe that people are really good at heart."*
+
+### Context Notes
+This entry was written approximately 3 days before the arrest of all Secret Annex residents. The handwriting analysis confirms authenticity. Paper watermark matches known 1940s Dutch manufacturing.
+
+### Archive Metadata
+- **Pages**: 1 of 263 total diary pages
+- **Condition**: Excellent preservation
+- **Authentication**: Verified by Netherlands Institute for War Documentation
+- **Previous Translations**: 70+ languages
+
+### Investigation Notes
+Cross-referenced with arrest records from Amsterdam Police Archive. Timeline verified against Nazi deportation schedules for Dutch Jews in August 1944.
+
+---
+*Document digitized from original manuscript held by Anne Frank House, Amsterdam*`,
       sourceType: EvidenceSource.PERSONAL_DIARY, tier: EvidenceTier.REVELATION, reliability: 95, completeness: 90, bias: 10
+    },
+    {
+      id: 'ev_ww2_002', memoryId: 'mem_ww2_001', title: 'Amsterdam Police Arrest Report',
+      content: `# ARREST REPORT - CASE #4461
+## Amsterdam Police Department
+
+**Date**: August 4, 1944  
+**Time**: 10:30 AM  
+**Location**: 263 Prinsengracht, Amsterdam  
+**Reporting Officer**: Sergeant Abraham Kaper  
+**Classification**: Security Police Action
+
+---
+
+### Subjects Arrested
+1. **Otto Frank** (55) - German-Jewish refugee
+2. **Edith Frank-Holländer** (44) - German-Jewish refugee  
+3. **Margot Frank** (18) - Stateless
+4. **Anne Frank** (15) - Stateless
+5. **Hermann van Pels** (54) - German-Jewish refugee
+6. **Auguste van Pels** (45) - German-Jewish refugee
+7. **Peter van Pels** (18) - Stateless
+8. **Fritz Pfeffer** (55) - German-Jewish refugee
+
+### Accomplices
+- **Johannes Kleiman** (57) - Dutch helper
+- **Victor Kugler** (53) - Austrian helper
+
+### Description of Operation
+Acting on anonymous tip received August 3rd via telephone. Caller reported suspicious activity and possible Jewish refugees hiding in commercial building.
+
+Search conducted of business premises. Discovered concealed entrance behind movable bookcase leading to hidden rooms. Eight individuals found in cramped living quarters with evidence of extended occupation.
+
+### Evidence Recovered
+- Personal documents and identification papers
+- Food rations (expired)
+- Personal belongings and clothing
+- **Notebooks and loose papers** (confiscated but deemed unimportant)
+- Radio equipment (illegal possession)
+
+### Disposition
+All subjects transported to Westerbork transit camp pending deportation. Accomplices taken for interrogation.
+
+### Officer Notes
+Subjects appeared malnourished but cooperative. Hidden rooms showed signs of long-term habitation. Business associates claimed ignorance of concealed refugees.
+
+---
+**Report Filed**: August 4, 1944, 14:00  
+**Approved**: SS-Hauptscharführer Karl Silberbauer`,
+      sourceType: EvidenceSource.GOVERNMENT_DOCUMENT, tier: EvidenceTier.COMPLICATION, reliability: 85, completeness: 75, bias: 60
+    },
+    {
+      id: 'ev_ww2_003', memoryId: 'mem_ww2_001', title: 'Anne Frank House Visitor Guide',
+      content: `# ANNE FRANK HOUSE - VISITOR INFORMATION
+
+**263 Prinsengracht, Amsterdam**
+
+## The Secret Annex
+From July 1942 to August 1944, eight people lived in hiding behind a movable bookcase in these rooms. Anne Frank, a Jewish girl, wrote about her experiences in her diary.
+
+### What You'll See Today
+- Original bookcase entrance
+- Living quarters where the Frank family hid  
+- Anne's diary (replica on display)
+- Historical photographs and documents
+
+### Quick Facts
+- **Hiding Period**: 2 years, 1 month
+- **Discovery Date**: August 4, 1944
+- **Diary Pages**: Over 260 entries
+- **Annual Visitors**: 1.3 million
+
+The diary was published by Anne's father Otto Frank, the sole survivor among the eight residents.
+
+---
+*Educational material provided by Anne Frank House Foundation*`,
+      sourceType: EvidenceSource.NEWS_REPORT, tier: EvidenceTier.SURFACE, reliability: 90, completeness: 60, bias: 5
+    },
+    {
+      id: 'ev_ww2_004', memoryId: 'mem_ww2_001', title: 'Otto Frank\'s Post-War Interview',
+      content: `# INTERVIEW TRANSCRIPT
+## Survivor Testimony - Otto Frank
+
+**Date**: March 15, 1947  
+**Interviewer**: Dr. Elisabeth Lönne, Netherlands Institute for War Documentation  
+**Location**: Amsterdam
+
+---
+
+**Dr. Lönne**: Can you tell us about the decision to go into hiding?
+
+**Otto Frank**: In July 1942, Margot received a call-up for deportation to a work camp in Germany. We knew what this meant. We had been preparing the hiding place for months with the help of my employees - Johannes Kleiman, Victor Kugler, Miep Gies, and Bep Voskuijl.
+
+**Dr. Lönne**: What was daily life like in the Secret Annex?
+
+**Otto Frank**: We lived in constant fear. During business hours, we had to remain completely silent. Anne found this particularly difficult - she was such a vibrant girl. She began writing in her diary almost immediately after we went into hiding.
+
+**Dr. Lönne**: Anne's diary has gained international attention. Did you know she was writing?
+
+**Otto Frank**: Yes, I encouraged her. Writing seemed to help her process what we were experiencing. She often read passages to the family. She dreamed of becoming a writer after the war.
+
+**Dr. Lönne**: Can you describe the arrest?
+
+**Otto Frank**: August 4, 1944. We were betrayed - to this day, we don't know by whom. The police came with a Dutch detective. They gave us five minutes to pack. Anne asked if she could take her diary, but they refused. Miep found it later and kept it safe.
+
+**Dr. Lönne**: You were the only survivor from the Secret Annex. How do you carry this burden?
+
+**Otto Frank**: Anne's words give me strength. She wrote, "I still believe people are good at heart." If she could maintain hope in that place, then I must honor that by sharing her story with the world.
+
+---
+*Interview conducted as part of war crimes documentation project*`,
+      sourceType: EvidenceSource.PERSONAL_DIARY, tier: EvidenceTier.CONTEXT, reliability: 95, completeness: 85, bias: 15
     },
     {
       id: 'ev_space_001', memoryId: 'mem_space_001', title: 'Apollo 8 Audio Recording',
