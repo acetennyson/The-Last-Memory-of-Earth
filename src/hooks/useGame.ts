@@ -3,6 +3,7 @@ import type { GameContent, Memory, PlayerProfile, CivilizationResult, HistoryBoo
 import { GameEngine } from '../engine/GameEngine';
 import { GameState, EvidenceSource, EvidenceTier } from '../engine/shared/enums';
 import { sampleContent, memoryConnections } from '../data/sampleContent';
+import { historicalContent } from '../data/historicalContent';
 
 export function useGame() {
   const [engine] = useState(() => new GameEngine(sampleContent));
@@ -52,7 +53,7 @@ export function useGame() {
     if (!memory) return;
     
     // Get evidence for the current memory from historical content
-    const { historicalContent } = require('../data/historicalContent');
+    
     const memoryEvidence = historicalContent.evidence.filter((e: any) => e.memoryId === memory.id);
     
     if (memoryEvidence.length > 0) {

@@ -69,7 +69,7 @@ The final entry's message—that people are "really good at heart"—remains one
       archetype: MemoryArchetype.ACHIEVEMENT, artifactType: ArtifactType.PHOTOGRAPH,
       impact: { compassion: 6, progress: 8, truth: 7, freedom: 5, power: 3, legacy: 9 },
       corruptionScore: 0, truthScore: 98, investigationCost: 3,
-      evidenceIds: ['ev_space_001'], contradictionIds: [], corruptionIds: [],
+      evidenceIds: ['ev_space_001', 'ev_space_002', 'ev_space_003', 'ev_space_004'], contradictionIds: [], corruptionIds: [],
       tags: ['space', 'perspective', 'unity', 'earth'], era: '1968'
     },
 
@@ -319,8 +319,76 @@ The diary was published by Anne's father Otto Frank, the sole survivor among the
     },
     {
       id: 'ev_space_001', memoryId: 'mem_space_001', title: 'Apollo 8 Audio Recording',
-      content: 'Mission Control Audio - "Oh my God! Look at that picture over there! Here\'s the Earth coming up. Wow, is that pretty! You got a color film, Jim? Hand me that roll of color quick, would you..."',
+      content: `# APOLLO 8 MISSION AUDIO TRANSCRIPT
+**Date**: December 24, 1968
+**Time**: 16:37 GMT
+**Location**: Lunar orbit
+
+**ANDERS**: "Oh my God! Look at that picture over there! Here's the Earth coming up. Wow, is that pretty! You got a color film, Jim? Hand me that roll of color quick, would you..."
+
+**LOVELL**: "Oh man, that's great!"
+
+**BORMAN**: "Just grab me a color... a color exterior, there..."
+
+*[Sound of camera mechanism]*
+
+**Mission Control**: "Apollo 8, Houston. You are GO for continued lunar orbit."`,
       sourceType: EvidenceSource.AUDIO_LOG, tier: EvidenceTier.SURFACE, reliability: 98, completeness: 85, bias: 5
+    },
+    {
+      id: 'ev_space_002', memoryId: 'mem_space_001', title: 'William Anders Personal Log',
+      content: `# PERSONAL MISSION LOG - WILLIAM ANDERS
+**Apollo 8 Command Module Pilot**
+
+**December 24, 1968 - Post-EVA Personal Notes**
+
+The moment I saw Earth rise over the lunar horizon, something fundamental shifted in my perspective. We came here to explore the Moon, but we discovered Earth instead.
+
+That small, blue marble suspended in the infinite black - so fragile, so alone. No borders visible from here. No wars, no politics, just one beautiful, living world.
+
+The irony isn't lost on me. We traveled 240,000 miles to see our home for the first time.
+
+*Note: Immediately requested color film. This image must be preserved.*`,
+      sourceType: EvidenceSource.PERSONAL_DIARY, tier: EvidenceTier.CONTEXT, reliability: 95, completeness: 90, bias: 10
+    },
+    {
+      id: 'ev_space_003', memoryId: 'mem_space_001', title: 'NASA Internal Memo - Photo Impact Assessment',
+      content: `# INTERNAL MEMORANDUM
+**TO**: NASA Public Affairs
+**FROM**: Mission Planning Division
+**DATE**: January 15, 1969
+**RE**: Earthrise Photograph Public Response
+
+**Classification**: Internal Use Only
+
+The "Earthrise" photograph from Apollo 8 is generating unprecedented public response. Initial concerns:
+
+1. **Unplanned Media Event**: Photo was spontaneous, not part of mission objectives
+2. **Resource Allocation**: Crew used valuable color film without authorization
+3. **Political Implications**: Image being adopted by environmental movement
+
+**Recommendation**: Embrace the moment. This single image may do more for space program public support than all our technical achievements combined.
+
+**Note**: Life Magazine requesting exclusive rights. Approve immediately.`,
+      sourceType: EvidenceSource.GOVERNMENT_DOCUMENT, tier: EvidenceTier.COMPLICATION, reliability: 85, completeness: 70, bias: 40
+    },
+    {
+      id: 'ev_space_004', memoryId: 'mem_space_001', title: 'Stewart Brand - Whole Earth Catalog Entry',
+      content: `# WHOLE EARTH CATALOG - SPRING 1969 EDITION
+
+**THE EARTHRISE PHOTOGRAPH**
+*Apollo 8, December 1968*
+
+For years I've been campaigning for NASA to photograph the whole Earth. "Why haven't we seen a picture of the whole Earth yet?" I kept asking. Then these astronauts, almost by accident, gave us something even better.
+
+This isn't just a photograph. It's a mirror. In it, we see ourselves as we truly are: one tribe, on one world, with one shared destiny.
+
+The environmental movement now has its flag. The peace movement has its symbol. Humanity has its family portrait.
+
+**Access**: This image belongs to everyone. We are making it available at cost in poster form. Every home, every classroom, every heart should hold this view.
+
+*"We are as gods and might as well get good at it."*`,
+      sourceType: EvidenceSource.NEWS_REPORT, tier: EvidenceTier.REVELATION, reliability: 90, completeness: 85, bias: 25
     },
     {
       id: 'ev_civil_001', memoryId: 'mem_civil_001', title: 'Birmingham Jail Letter Fragment',
