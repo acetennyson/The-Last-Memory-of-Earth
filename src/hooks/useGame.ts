@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { GameContent, Memory, PlayerProfile, CivilizationResult, HistoryBook, Evidence, Contradiction } from '../engine';
 import { GameEngine } from '../engine/GameEngine';
-import { GameState } from '../engine/shared/enums';
+import { GameState, EvidenceSource, EvidenceTier } from '../engine/shared/enums';
 import { sampleContent, memoryConnections } from '../data/sampleContent';
 
 export function useGame() {
@@ -31,12 +31,41 @@ export function useGame() {
   const start = useCallback(() => setStage(GameState.ARCHIVE), []);
 
   const selectMemory = useCallback((m: Memory) => {
+    // Consume power for viewing memory
+    setPower(p => Math.max(0, p - 1));
     setMemory(m);
     setStage(GameState.MEMORY);
     // Remove the engine.selectMemory call since it doesn't exist
   }, []);
 
   const investigateWithPath = useCallback((pathId: string) => {
+    // Check if enough power for investigation
+    if (power < 10) {
+      setMessage('Insufficient archive power for deep scan.');
+      setTimeout(() => setMessage(''), 1500);
+      return;
+    }
+    
+    // Consume power for deep investigation
+    setPower(p => Math.max(0, p - 10));
+    
+    if (!memory) return;
+    
+    // Get evidence for the current memory from historical content
+    const { historicalContent } = require('../data/historicalContent');
+    const memoryEvidence = historicalContent.evidence.filter((e: any) => e.memoryId === memory.id);
+    
+    if (memoryEvidence.length > 0) {
+      setEvidenceRecords(memoryEvidence);
+      setContradictions([]);
+      setInvestigationStep(0);
+      setTotalInvestigationSteps(memoryEvidence.length);
+      setContradictionsRevealed(false);
+      setStage(GameState.INVESTIGATION);
+      return;
+    }
+    
+    // Fallback for other memories
     const result = engine.investigate() as any;
     if (result) {
       const records = result.revelations?.map((r: any) => r.evidence as Evidence) || [];
@@ -46,10 +75,10 @@ export function useGame() {
       setTotalInvestigationSteps(records.length);
       setStage(GameState.INVESTIGATION);
     } else {
-      setMessage('Insufficient archive power.');
+      setMessage('No evidence found.');
       setTimeout(() => setMessage(''), 1500);
     }
-  }, [engine]);
+  }, [engine, memory, power]);
 
   const backFromInvestigation = useCallback(() => {
     setStage(GameState.ARCHIVE);
