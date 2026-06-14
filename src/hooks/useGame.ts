@@ -53,16 +53,40 @@ export function useGame() {
     if (!memory) return;
     
     // Get evidence for the current memory from historical content
-    
     const memoryEvidence = historicalContent.evidence.filter((e: any) => e.memoryId === memory.id);
     
-    if (memoryEvidence.length > 0) {
-      setEvidenceRecords(memoryEvidence);
+    // Filter evidence based on investigation path
+    const getEvidenceForPath = (pathId: string, evidence: any[]) => {
+      const pathFilters = {
+        government: ['GOVERNMENT_DOCUMENT'],
+        testimony: ['PERSONAL_DIARY'], 
+        corporate: ['NEWS_REPORT'],
+        ai_logs: ['AUDIO_LOG', 'SCIENTIFIC_RECORD']
+      };
+      
+      const allowedSources = pathFilters[pathId as keyof typeof pathFilters] || [];
+      return evidence.filter((e: any) => allowedSources.includes(e.sourceType));
+    };
+    
+    const filteredEvidence = getEvidenceForPath(pathId, memoryEvidence);
+    
+    // Debug info
+    console.log('PathId:', pathId);
+    console.log('Memory Evidence:', memoryEvidence.map(e => ({id: e.id, sourceType: e.sourceType})));
+    console.log('Filtered Evidence:', filteredEvidence.map(e => ({id: e.id, sourceType: e.sourceType})));
+    
+    if (filteredEvidence.length > 0) {
+      setEvidenceRecords(filteredEvidence);
       setContradictions([]);
       setInvestigationStep(0);
-      setTotalInvestigationSteps(memoryEvidence.length);
+      setTotalInvestigationSteps(filteredEvidence.length);
       setContradictionsRevealed(false);
       setStage(GameState.INVESTIGATION);
+      return;
+    } else {
+      // If no evidence found for this path, show a message
+      setMessage(`No evidence available for ${pathId} investigation path.`);
+      setTimeout(() => setMessage(''), 2000);
       return;
     }
     
@@ -93,6 +117,14 @@ export function useGame() {
     if (investigationStep < totalInvestigationSteps - 1) {
       setInvestigationStep(s => s + 1);
     } else if (contradictions.length > 0 && !contradictionsRevealed) {
+      setContradictionsRevealed(true);
+    }
+  }, [investigationStep, totalInvestigationSteps, contradictions.length, contradictionsRevealed]);
+
+  const previousEvidenceStep = useCallback(() => {
+    if (investigationStep > 0) {
+      setInvestigationStep(s => s - 1);
+    } else if (contradictions.length < (totalInvestigationSteps - 1) && !contradictionsRevealed) {
       setContradictionsRevealed(true);
     }
   }, [investigationStep, totalInvestigationSteps, contradictions.length, contradictionsRevealed]);
@@ -152,6 +184,7 @@ export function useGame() {
     investigateWithPath,
     backFromInvestigation,
     backToArchive,
+    previousEvidenceStep,
     nextEvidenceStep,
     preserve,
     discard,

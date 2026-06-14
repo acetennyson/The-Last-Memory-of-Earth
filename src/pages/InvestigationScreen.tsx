@@ -55,7 +55,7 @@ export default function InvestigationScreen({ game }: { game: GameHook }) {
           }}>
             {/* Previous Button */}
             <button
-              onClick={() => game.investigationStep > 0 && game.nextEvidenceStep()}
+              onClick={() => game.investigationStep > 0 && game.previousEvidenceStep()}
               disabled={game.investigationStep === 0}
               style={{
                 background: 'transparent',

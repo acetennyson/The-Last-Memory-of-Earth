@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGame } from './hooks/useGame';
-import { sampleContent } from './data/sampleContent';
+import { historicalContent } from './data/historicalContent';
 import BootScreen from './pages/BootScreen';
 import IntroScreen from './pages/IntroScreen';
 import ArchiveScreen from './pages/ArchiveScreen';
@@ -18,7 +18,7 @@ export default function App() {
   const screens: Record<string, React.ReactNode> = {
     [game.Stage.BOOT]: <BootScreen onComplete={game.boot} />,
     [game.Stage.INTRO]: <IntroScreen onStart={game.start} />,
-    [game.Stage.ARCHIVE]: <ArchiveScreen game={game} memories={sampleContent.memories} />,
+    [game.Stage.ARCHIVE]: <ArchiveScreen game={game} memories={historicalContent.memories} />,
     [game.Stage.MEMORY]: <MemoryScreen game={game} />,
     [game.Stage.INVESTIGATION]: <InvestigationScreen game={game} />,
     [game.Stage.CORRUPTED]: <CorruptedScreen game={game} />,
