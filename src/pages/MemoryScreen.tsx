@@ -32,8 +32,11 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
 
   const handlePathSelected = (pathId: string) => {
     setShowPathSelection(false);
-    // Don't render memory content, let the investigation start
-    game.investigateWithPath(pathId);
+    setShowReconstruction(false);
+    // Ensure clean state before investigation
+    setTimeout(() => {
+      game.investigateWithPath(pathId);
+    }, 100);
   };
 
   // Check if memory has evidence available for investigation
