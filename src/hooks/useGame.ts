@@ -106,7 +106,7 @@ export function useGame() {
   }, [engine, memory, power]);
 
   const backFromInvestigation = useCallback(() => {
-    setStage(GameState.ARCHIVE);
+    setStage(GameState.MEMORY);
   }, []);
 
   const backToArchive = useCallback(() => {
