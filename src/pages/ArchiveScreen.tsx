@@ -7,10 +7,40 @@ import MatrixBackground from '../components/MatrixBackground';
 import '../styles/cyber.css';
 
 export default function ArchiveScreen({ game, memories }: { game: GameHook, memories: Memory[] }) {
-  // Only show memories that haven't been decided on yet
-  const undecidedMemories = memories.filter(memory => 
-    !game.preservedMemories.has(memory.id) && !game.discardedMemories.has(memory.id)
-  );
+  // Filter memories based on unlock status
+  const getMemoryStatus = (memory: any) => {
+    // Check if already decided on
+    if (game.preservedMemories.has(memory.id) || game.discardedMemories.has(memory.id)) {
+      return 'decided';
+    }
+    
+    // Check if locked due to dependencies
+    if (memory.dependsOn) {
+      const dependenciesMet = memory.dependsOn.every((depId: string) => game.preservedMemories.has(depId));
+      if (!dependenciesMet) {
+        // Check if permanently locked (critical dependency discarded)
+        if (memory.criticalDependency && memory.dependsOn.some((depId: string) => game.discardedMemories.has(depId))) {
+          return 'locked_permanent';
+        }
+        return 'locked_dependency';
+      }
+    }
+    
+    // Check investigation requirements
+    if (memory.minInvestigations && game.investigationCount < memory.minInvestigations) {
+      return 'locked_investigations';
+    }
+    
+    return 'available';
+  };
+  
+  // Separate memories by status
+  const availableMemories = memories.filter(m => getMemoryStatus(m) === 'available');
+  const lockedMemories = memories.filter(m => {
+    const status = getMemoryStatus(m);
+    return status.startsWith('locked');
+  });
+  const decidedMemories = memories.filter(m => getMemoryStatus(m) === 'decided');
 
   return (
     <div className="cyber-container">
@@ -94,10 +124,12 @@ export default function ArchiveScreen({ game, memories }: { game: GameHook, memo
           }}>
             <div>STATUS: <span className="cyber-text--primary">ACTIVE</span></div>
             <div>POWER: <span style={{color: game.power > 50 ? 'var(--cyber-primary)' : 'var(--cyber-danger)'}}>{game.power}%</span></div>
+            <div>INVESTIGATIONS: <span className="cyber-text--accent">{game.investigationCount}</span></div>
             <div>TOTAL: <span className="cyber-text--accent">{memories.length}</span></div>
             <div>PRESERVED: <span className="cyber-text--primary">{game.preservedCount}</span></div>
             <div>DISCARDED: <span style={{color: 'var(--cyber-danger)'}}>{game.discardedCount}</span></div>
-            <div>UNDECIDED: <span className="cyber-text--warning">{undecidedMemories.length}</span></div>
+            <div>AVAILABLE: <span className="cyber-text--warning">{availableMemories.length}</span></div>
+            <div>LOCKED: <span style={{color: '#666'}}>{lockedMemories.length}</span></div>
           </div>
 
           {/* Chapter Navigation Style */}
@@ -147,7 +179,7 @@ export default function ArchiveScreen({ game, memories }: { game: GameHook, memo
             gap: '20px',
             marginTop: '20px',
           }}>
-            {undecidedMemories.length === 0 ? (
+            {availableMemories.length === 0 && lockedMemories.length === 0 ? (
               <div style={{
                 gridColumn: '1 / -1',
                 textAlign: 'center',
@@ -165,7 +197,9 @@ export default function ArchiveScreen({ game, memories }: { game: GameHook, memo
                 </div>
               </div>
             ) : (
-              undecidedMemories.map((memory, index) => (
+              <>
+                {/* Available Memories */}
+                {availableMemories.map((memory, index) => (
               <div
                 key={memory.id}
                 onClick={() => game.selectMemory(memory)}
@@ -293,7 +327,117 @@ export default function ArchiveScreen({ game, memories }: { game: GameHook, memo
                   </div>
                 </div>
               </div>
-            ))
+            ))}
+            
+            {/* Locked Memories */}
+            {lockedMemories.map((memory: any, index) => {
+                  const status = getMemoryStatus(memory);
+                  const isPermanentlyLocked = status === 'locked_permanent';
+                  
+                  return (
+                    <div
+                      key={memory.id}
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(50, 50, 50, 0.3) 0%, rgba(30, 30, 30, 0.5) 100%)',
+                        border: '2px solid #444',
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        cursor: 'not-allowed',
+                        opacity: isPermanentlyLocked ? 0.3 : 0.6,
+                        position: 'relative',
+                      }}
+                    >
+                      {/* Lock Overlay */}
+                      <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        zIndex: 2,
+                      }}>
+                        <div style={{
+                          fontSize: 32,
+                          marginBottom: 8,
+                          color: isPermanentlyLocked ? '#666' : '#888',
+                        }}>
+                          🔒
+                        </div>
+                        <div style={{
+                          fontSize: 12,
+                          color: isPermanentlyLocked ? '#666' : '#888',
+                          textAlign: 'center',
+                          fontWeight: 600,
+                          textTransform: 'uppercase',
+                          letterSpacing: 1,
+                        }}>
+                          {status === 'locked_dependency' ? 'PRESERVE DEPENDENCIES' :
+                           status === 'locked_investigations' ? `NEED ${memory.minInvestigations} INVESTIGATIONS` :
+                           'PERMANENTLY LOCKED'}
+                        </div>
+                        {memory.dependsOn && (
+                          <div style={{
+                            fontSize: 10,
+                            color: '#666',
+                            marginTop: 4,
+                            textAlign: 'center',
+                          }}>
+                            Requires: {memory.dependsOn.map((depId: string) => {
+                              const depMemory = memories.find((m: any) => m.id === depId);
+                              return depMemory?.title || depId;
+                            }).join(', ')}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Faded Memory Content */}
+                      <div style={{
+                        background: 'linear-gradient(135deg, #222 0%, #111 100%)',
+                        borderBottom: `4px solid #444`,
+                      }}>
+                        <div style={{ padding: '20px 24px' }}>
+                          <div style={{
+                            background: '#444',
+                            color: '#666',
+                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            fontSize: '10px',
+                            fontWeight: 900,
+                            letterSpacing: 1,
+                            display: 'inline-block',
+                          }}>
+                            #{memory.id.slice(0, 8).toUpperCase()}
+                          </div>
+                          
+                          <h3 style={{
+                            fontSize: 16,
+                            fontWeight: 700,
+                            marginBottom: 8,
+                            lineHeight: 1.2,
+                            color: '#666',
+                          }}>
+                            {memory.title}
+                          </h3>
+                          
+                          <div style={{
+                            fontSize: 10,
+                            color: '#555',
+                            textTransform: 'uppercase',
+                            letterSpacing: 1,
+                          }}>
+                            {memory.category} • {memory.era}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
             )}
           </div>
         </div>

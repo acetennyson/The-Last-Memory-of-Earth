@@ -45,6 +45,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
   if (showPathSelection) {
     return (
       <InvestigationPathSelection
+        game={game}
         memoryTitle={memory?.title || 'Unknown Memory'}
         onSelectPath={handlePathSelected}
         onCancel={handleCancel}

@@ -92,7 +92,27 @@ No authorization documents remain.
     contradictionIds: [], 
     corruptionIds: [],
     tags: ['politics', 'memory', 'deletion', 'authority'], 
-    era: '2387'
+    era: '2387',
+    investigationPaths: [
+      {
+        id: 'government',
+        name: 'Government Records', 
+        description: 'Official documents, classified files, policy archives',
+        evidenceIds: ['ev_tax_001']
+      },
+      {
+        id: 'testimony',
+        name: 'Survivor Testimony',
+        description: 'Personal accounts, witness statements, diary entries', 
+        evidenceIds: ['ev_tax_003']
+      },
+      {
+        id: 'corporate',
+        name: 'Corporate Archive',
+        description: 'Business records, internal memos, financial data',
+        evidenceIds: ['ev_tax_002']
+      }
+    ]
   },
 
   {
@@ -207,6 +227,29 @@ Partial quotes leaked to media suggest she provided specific details about:
     contradictionIds: [], 
     corruptionIds: [],
     tags: ['prophecy', 'child', 'prediction', 'disappearance', 'memory'], 
-    era: '2398'
+    era: '2398',
+    investigationPaths: [
+      {
+        id: 'government',
+        name: 'Government Records',
+        description: 'Official documents, classified files, policy archives', 
+        evidenceIds: ['ev_prophet_001', 'ev_prophet_002']
+      },
+      {
+        id: 'testimony',
+        name: 'Survivor Testimony', 
+        description: 'Personal accounts, witness statements, diary entries',
+        evidenceIds: ['ev_prophet_003']
+      },
+      {
+        id: 'ai_logs',
+        name: 'AI System Logs',
+        description: 'Machine records, algorithm decisions, data patterns',
+        evidenceIds: ['ev_prophet_004'] 
+      }
+    ],
+    dependsOn: ['mem_tax_001'], // Unlocked after Memory Tax preserved
+    minInvestigations: 1,
+    criticalDependency: false // If Memory Tax discarded, this can still unlock later
   }
 ];

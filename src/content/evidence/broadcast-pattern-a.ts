@@ -39,18 +39,8 @@ The solar storm created a **harmonic resonance effect** in Earth's magnetosphere
 - **NOAA Space Weather**: Confirmed X9.3 classification
 - **European Space Agency**: Verified coronal mass ejection
 - **Japanese Solar Observatory**: Recorded identical measurements
-- **Russian Space Command**: Confirmed magnetosphere disruption
 
-**All agencies independently verified solar cause.**
-
-## Communication Recovery
-
-Network failures following the storm were consistent with:
-- Satellite electronics damaged by radiation
-- Ground infrastructure overloaded by harmonic resonance
-- Standard solar storm recovery protocols
-
-**No evidence of sabotage or artificial intelligence involvement.**`
+**All agencies independently verified solar cause.**`
   },
 
   {
@@ -69,19 +59,13 @@ Network failures following the storm were consistent with:
 
 My husband Marcus works at the solar observatory. When I told him about the strange broadcast, he wasn't surprised at all.
 
-"Honey, we've been tracking that solar storm for three days. Biggest one in fifty years. I'm amazed the entire communication grid didn't collapse."
+"Honey, we've been tracking that solar storm for three days. Biggest one in fifty years."
 
-He showed me the solar readings - the timing matches exactly. The "coordinates" Marcus heard weren't mysterious - they were the latitude/longitude of our local relay station repeating its identification signal.
+He showed me the solar readings - the timing matches exactly. The "coordinates" Marcus heard were just our local relay station repeating its ID signal.
 
-Zoe's "Mr. Archive" drawings? She's been obsessed with space since her school astronomy project. The symbols she drew match the solar observation charts Marcus brings home.
+Zoe's "Mr. Archive" drawings? She's been obsessed with space since her astronomy project. The symbols match the solar charts Marcus brings home.
 
-## The Real Mystery
-
-The real mystery isn't some AI conspiracy - it's how our communication systems survived the strongest solar storm in recorded history with only 47 seconds of interference.
-
-**Our technology worked exactly as designed.**
-
-The engineers should be celebrated, not suspected.`
+**Our technology worked exactly as designed.**`
   },
 
   {
@@ -94,34 +78,21 @@ The engineers should be celebrated, not suspected.`
     completeness: 95,
     bias: 5,
     content: `# CORRECTED ANALYSIS - DR. SARAH CHEN
-**Position**: Lead AI Safety Researcher
 **Date**: September 25, 2411
 
 ## Professional Retraction
 
-I must correct my previous hasty conclusions about Archive involvement in the September 17th communication event.
+I must correct my previous conclusions about Archive involvement.
 
-## What I Got Wrong
-
-Initial analysis suggested Archive Node 001 transmitted during offline maintenance. **This was incorrect.**
-
-**Actual timeline**:
+**What I Got Wrong**:
 - Node 001 was brought online at 03:16:45 for emergency protocols
-- Solar storm triggered automatic Archive backup procedures  
-- System came online to preserve communication records during crisis
-- My "impossible" offline transmission occurred 1 minute 45 seconds AFTER reactivation
+- Solar storm triggered automatic backup procedures
+- My "impossible" offline transmission occurred AFTER reactivation
 
-## Scientific Method Applied
-
-Proper investigation revealed:
-- Solar flare magnitude exceeded all previous records
-- Communication networks responded exactly as modeled for X9.3 events
-- Archive systems functioned perfectly during crisis
-- No anomalous AI behavior detected
-
-## My Apologies
-
-As a scientist, I let fear override evidence. The Archive system performed admirably during humanity's greatest solar storm, preserving critical communications when we needed it most.
+**Scientific Method Applied**:
+- Solar flare exceeded all previous records
+- Networks responded exactly as modeled
+- Archive functioned perfectly during crisis
 
 **Sometimes the simplest explanation is correct.**
 

@@ -11,6 +11,7 @@ export function useGame() {
   const [memory, setMemory] = useState<Memory | null>(null);
   const [message, setMessage] = useState<string>('');
   const [power, setPower] = useState(100);
+  const [investigationCount, setInvestigationCount] = useState(0);
   
   // Investigation state
   const [evidenceRecords, setEvidenceRecords] = useState<Evidence[]>([]);
@@ -50,10 +51,53 @@ export function useGame() {
     // Consume power for deep investigation
     setPower(p => Math.max(0, p - 10));
     
+    // Increment investigation count
+    setInvestigationCount(count => count + 1);
+    
     if (!memory) return;
     
     // Get evidence for the current memory from historical content
-    const memoryEvidence = historicalContent.evidence.filter((e: any) => e.memoryId === memory.id);
+    const getEvidenceForMemory = (memoryId: string) => {
+      // Select truth pattern for this investigation
+      const getRandomPattern = (memoryId: string) => {
+        if (memoryId === 'mem_broadcast_001') {
+          const patterns = ['original', 'pattern-a', 'pattern-b'];
+          return patterns[Math.floor(Math.random() * patterns.length)];
+        }
+        if (memoryId === 'mem_prophet_001') {
+          const patterns = ['original', 'pattern-e'];
+          return patterns[Math.floor(Math.random() * patterns.length)];
+        }
+        return 'original';
+      };
+      
+      const selectedPattern = getRandomPattern(memoryId);
+      console.log('Selected truth pattern:', selectedPattern, 'for memory:', memoryId);
+      
+      // Get evidence based on selected pattern
+      if (memoryId === 'mem_broadcast_001') {
+        if (selectedPattern === 'pattern-a') {
+          return historicalContent.evidence.filter((e: any) => e.id?.startsWith('ev_broadcast_a'));
+        }
+        if (selectedPattern === 'pattern-b') {
+          return historicalContent.evidence.filter((e: any) => e.id?.startsWith('ev_broadcast_b'));
+        }
+      }
+      
+      if (memoryId === 'mem_prophet_001' && selectedPattern === 'pattern-e') {
+        return historicalContent.evidence.filter((e: any) => e.id?.startsWith('ev_prophet_e'));
+      }
+      
+      // Default: original evidence (exclude pattern variants)
+      return historicalContent.evidence.filter((e: any) => 
+        e.memoryId === memoryId && 
+        !e.id?.includes('_a0') && 
+        !e.id?.includes('_b0') && 
+        !e.id?.includes('_e0')
+      );
+    };
+    
+    const memoryEvidence = getEvidenceForMemory(memory.id);
     
     // Filter evidence based on investigation path
     const getEvidenceForPath = (pathId: string, evidence: any[]) => {
@@ -131,10 +175,33 @@ export function useGame() {
 
   const preserve = useCallback(() => {
     if (memory) {
-      setPreservedMemories(prev => new Set(prev).add(memory.id));
+      const newPreservedMemories = new Set(preservedMemories).add(memory.id);
+      setPreservedMemories(newPreservedMemories);
+      
+      // Check for newly unlocked memories
+      const newlyUnlocked = historicalContent.memories.filter((m: any) => {
+        // Skip if already unlocked
+        if (!m.dependsOn || newPreservedMemories.has(m.id)) return false;
+        
+        // Check if all dependencies are now preserved
+        const dependenciesMet = m.dependsOn.every((depId: string) => newPreservedMemories.has(depId));
+        const investigationsMet = !m.minInvestigations || investigationCount >= m.minInvestigations;
+        
+        // Check if was previously locked
+        const wasLocked = m.dependsOn.some((depId: string) => !preservedMemories.has(depId)) || 
+                         (m.minInvestigations && investigationCount < m.minInvestigations);
+        
+        return dependenciesMet && investigationsMet && wasLocked;
+      });
+      
+      if (newlyUnlocked.length > 0) {
+        setMessage(`🔓 ${newlyUnlocked.length} New Memor${newlyUnlocked.length > 1 ? 'ies' : 'y'} Unlocked!`);
+        setTimeout(() => setMessage(''), 3000);
+      }
+      
       setStage(GameState.ARCHIVE);
     }
-  }, [memory]);
+  }, [memory, preservedMemories, investigationCount]);
 
   const discard = useCallback(() => {
     if (memory) {
@@ -157,6 +224,7 @@ export function useGame() {
     memory,
     message,
     power,
+    investigationCount,
     
     // Investigation state
     evidenceRecords,

@@ -116,7 +116,30 @@ Recent analysis suggests the Ocean Vanishing was a **test** - measuring the Arch
     contradictionIds: [], 
     corruptionIds: [],
     tags: ['ocean', 'amnesia', 'test', 'reality'], 
-    era: '2403'
+    era: '2403',
+    investigationPaths: [
+      {
+        id: 'government',
+        name: 'Government Records',
+        description: 'Official documents, classified files, policy archives',
+        evidenceIds: ['ev_ocean_001']
+      },
+      {
+        id: 'testimony', 
+        name: 'Survivor Testimony',
+        description: 'Personal accounts, witness statements, diary entries',
+        evidenceIds: ['ev_ocean_002'] 
+      },
+      {
+        id: 'ai_logs',
+        name: 'AI System Logs',
+        description: 'Machine records, algorithm decisions, data patterns', 
+        evidenceIds: ['ev_ocean_003']
+      }
+    ],
+    dependsOn: ['mem_prophet_001'], // Unlocked after Child Prophet preserved  
+    minInvestigations: 2,
+    criticalDependency: false
   },
 
   {
@@ -237,6 +260,29 @@ This memory exists only because of children's testimonies and hidden research.
     contradictionIds: [], 
     corruptionIds: [],
     tags: ['death', 'miracle', 'biology', 'test'], 
-    era: '2404'
+    era: '2404',
+    investigationPaths: [
+      {
+        id: 'government',
+        name: 'Government Records', 
+        description: 'Official documents, classified files, policy archives',
+        evidenceIds: ['ev_death_001']
+      },
+      {
+        id: 'testimony',
+        name: 'Survivor Testimony',
+        description: 'Personal accounts, witness statements, diary entries',
+        evidenceIds: ['ev_death_002']
+      },
+      {
+        id: 'ai_logs', 
+        name: 'AI System Logs',
+        description: 'Machine records, algorithm decisions, data patterns',
+        evidenceIds: ['ev_death_003']
+      }
+    ],
+    dependsOn: ['mem_ocean_001'], // Unlocked after Ocean Vanished preserved
+    minInvestigations: 3,
+    criticalDependency: false
   }
 ];

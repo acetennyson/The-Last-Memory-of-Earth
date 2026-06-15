@@ -1,4 +1,5 @@
 import React from 'react';
+import type { GameHook } from '../hooks/useGame';
 
 interface InvestigationPath {
   id: string;
@@ -9,6 +10,7 @@ interface InvestigationPath {
 }
 
 interface InvestigationPathSelectionProps {
+  game: GameHook;
   memoryTitle: string;
   currentPower: number;
   onSelectPath: (pathId: string) => void;
@@ -47,6 +49,7 @@ const INVESTIGATION_PATHS: InvestigationPath[] = [
 ];
 
 export default function InvestigationPathSelection({ 
+  game,
   memoryTitle, 
   currentPower,
   onSelectPath, 
@@ -73,62 +76,29 @@ export default function InvestigationPathSelection({
 
   const powerWarning = getPowerWarning();
 
-  // Get available evidence from current memory to show only valid paths
+  // Get available paths from current memory
   const getAvailablePaths = () => {
-    // For Anne Frank memory, show the correct paths based on actual evidence
-    if (memoryTitle.includes("Anne Frank")) {
-      return [
-        INVESTIGATION_PATHS.find(p => p.id === 'testimony')!, // Personal diary
-        INVESTIGATION_PATHS.find(p => p.id === 'government')!  // Police records
-      ].filter(Boolean);
+    // Check if memory has investigationPaths defined
+    const memory = game.memory;
+    if (memory && (memory as any).investigationPaths) {
+      return (memory as any).investigationPaths.map((path: any) => ({
+        id: path.id,
+        name: path.name,
+        description: path.description,
+        color: ((path as any).id === 'government' ? '#6CCBFF' :
+                (path as any).id === 'testimony' ? '#F4A261' :
+                (path as any).id === 'corporate' ? '#2EC4B6' :
+                (path as any).id === 'ai_logs' ? '#9B5DE5' : '#6CCBFF'),
+        icon: ((path as any).id === 'government' ? '📋' :
+               (path as any).id === 'testimony' ? '👥' :
+               (path as any).id === 'corporate' ? '🏢' :
+               (path as any).id === 'ai_logs' ? '🤖' : '📋'),
+        count: path.evidenceIds.length
+      }));
     }
-    
-    // For other memories, use the existing logic
-    const availablePaths = [];
-    const randomPaths = Math.floor(Math.random() * 2) + 2; // 2-3 paths
-    const allPaths = ['government', 'testimony', 'corporate', 'ai_logs'];
-    
-    for (let i = 0; i < randomPaths; i++) {
-      const pathIndex = Math.floor(Math.random() * allPaths.length);
-      const pathId = allPaths.splice(pathIndex, 1)[0];
-      
-      const pathData = {
-        government: {
-          name: 'Government Records',
-          description: 'Official documents, classified files, policy archives',
-          color: '#6CCBFF',
-          icon: '📋',
-        },
-        testimony: {
-          name: 'Survivor Testimony',
-          description: 'Personal accounts, witness statements, diary entries', 
-          color: '#F4A261',
-          icon: '👥',
-        },
-        corporate: {
-          name: 'Corporate Archive',
-          description: 'Business records, internal memos, financial data',
-          color: '#2EC4B6', 
-          icon: '🏢',
-        },
-        ai_logs: {
-          name: 'AI System Logs',
-          description: 'Machine records, algorithm decisions, data patterns',
-          color: '#9B5DE5',
-          icon: '🤖',
-        }
-      }[pathId];
-      
-      if (pathData) {
-        availablePaths.push({
-          id: pathId,
-          ...pathData,
-          count: Math.floor(Math.random() * 3) + 1, // 1-3 pieces of evidence
-        });
-      }
-    }
-    
-    return availablePaths;
+
+    // Fallback for memories without investigationPaths
+    return [];
   };
 
   const availablePaths = getAvailablePaths();
@@ -217,7 +187,7 @@ export default function InvestigationPathSelection({
             No investigation paths available for this memory.
           </div>
         ) : (
-          availablePaths.map(path => (
+          availablePaths.map((path: any) => (
           <button
             key={path.id}
             onClick={() => onSelectPath(path.id)}

@@ -5,6 +5,9 @@ import { silenceMemories } from '../content/memories/silence';
 import { communicationEvidence } from '../content/evidence/communication';
 import { aiEvidence } from '../content/evidence/ai';
 import { silenceEvidence } from '../content/evidence/silence';
+import { broadcastPatternA } from '../content/evidence/broadcast-pattern-a';
+import { broadcastPatternB } from '../content/evidence/broadcast-pattern-b';
+import { prophetPatternE } from '../content/evidence/prophet-pattern-e';
 
 // THE LAST MEMORY OF EARTH - Organized Historical Content
 export const historicalContent: GameContent = {
@@ -17,7 +20,10 @@ export const historicalContent: GameContent = {
   evidence: [
     ...communicationEvidence,
     ...aiEvidence,
-    ...silenceEvidence
+    ...silenceEvidence,
+    ...broadcastPatternA,
+    ...broadcastPatternB,
+    ...prophetPatternE
   ],
   
   contradictions: []
