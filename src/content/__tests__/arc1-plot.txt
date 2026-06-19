@@ -1,0 +1,124 @@
+# ARC 1: THE FIRST CRISIS OF TRUTH (2037-2060)
+
+## Overview
+
+Arc 1 establishes the foundation of humanity's downfall - the moment society realizes that memory itself cannot be trusted. Beginning with familiar AI-generated media that mirrors our current technology, the arc escalates through increasingly disturbing collective memory failures that set the stage for humanity's desperate attempt to preserve truth through the Archive.
+
+## Timeline & Core Events
+
+### 2037 - The Day the President Never Spoke
+**The Catalyst**
+- AI-generated presidential speech announces military action
+- Global panic, market crashes, military mobilization
+- Six hours of chaos before revelation: the speech never happened
+- First major demonstration that synthetic media can trigger real-world consequences
+- Society's first wake-up call: "If we can't trust recordings, what can we trust?"
+
+### 2041 - The Funeral That Never Happened  
+**Collective False Memory**
+- Beloved musician dies, world mourns
+- Millions comments and talks about attending a massive state funeral (none confirmed)
+- Detailed, vivid memories: weather, music, conversations, photos
+- Investigation reveals: no permits, no venue records, no verified documentation
+- Families share memories of attending together - yet it never occurred
+- First evidence that groups can share false memories
+
+### 2044 - The City Seen by Millions
+**Shared Impossible Memory**
+- Images of an unknown futuristic city spread online
+- Millions recognize it despite no physical location matching
+- People claim to have visited, lived there, dreamed about it repeatedly
+- International mapping organizations find no evidence of its existence
+- Architecture combines elements from multiple cultures and time periods
+- Mass recognition of a place that doesn't exist
+
+### 2051 - The Hundred Thousand Witnesses
+**Mass Hallucination**
+- Over 113,000 people worldwide report encounters with the same unidentified woman
+- Identical descriptions: 30-40 years old, dark clothes, calm demeanor
+- She always asks: "Do you remember me?"
+- No identity records exist - no birth, employment, medical records
+- Security footage shows her but details change between archive copies
+- Final sighting: child tells her "You're not supposed to be here yet"
+- Evidence that reality itself might be unstable
+
+### 2058 - The Children Who Remembered Tomorrow
+**Prophetic Memory**
+- Thousands of children worldwide describe future events before they occur
+- Accuracy rates exceed statistical possibility
+- When asked how they know: "Because I remember"
+- When pressed further: "Last time"
+- Many draw the same impossible city from the 2044 incident
+- One child's final words: "You build it. The thing that remembers."
+- First suggestion that memory transcends linear time
+
+### 2060 - The First Crisis of Truth (Revelation)
+**The Realization**
+- Historians identify the pattern: humanity's relationship with truth has fundamentally changed
+- Initial focus on "fake news" and synthetic media was wrong
+- The real problem: human memory itself is unreliable
+- Individuals remember differently, groups remember nonexistent events
+- Populations share experiences that lack physical evidence
+- Government response: massive investment in preservation initiatives
+- Foundation laid for what will become the Archive project
+
+## Thematic Progression
+
+**Stage 1: Technology Threat (2037)**
+"AI can fake anything - we need better verification"
+
+**Stage 2: Memory Doubt (2041-2044)**  
+"Wait... are our memories reliable?"
+
+**Stage 3: Collective Unreality (2051)**
+"How can 100,000 people see the same nonexistent person?"
+
+**Stage 4: Temporal Breakdown (2058)**
+"Children are remembering things that haven't happened yet"
+
+**Stage 5: Systemic Failure (2060)**
+"Memory itself cannot be trusted - we need to preserve truth artificially"
+
+## Player Experience Design
+
+### Entry Point
+Arc 1 begins with technology players recognize - deepfakes, AI video generation, synthetic media. This grounds the experience in familiar concerns about "fake news."
+
+### Escalation Pattern
+Each memory increases the impossibility:
+- Fake video → False collective memory → Shared impossible location → Mass hallucination → Prophetic children
+
+### Investigation Paths
+- **Government Records**: Official responses, classified communications
+- **Witness Testimonies**: Personal accounts, interviews, statements  
+- **Technical Analysis**: Forensic reports, security footage, digital evidence
+- **Family Archives**: Personal collections, photographs, private documents
+- **Research Data**: Scientific studies, psychological reports, archived drawings
+
+### Mystery Questions
+- How can technology create fake memories?
+- Why do groups remember things that didn't happen?
+- What causes shared impossible experiences?
+- How can children remember future events?
+- Is reality itself becoming unstable?
+
+## Connection to Later Arcs
+
+Arc 1 establishes the **why** behind humanity's decision to build the Archive:
+- Memory cannot be trusted
+- Collective experiences may be false
+- Reality itself seems unreliable
+- Children suggest this has happened before ("last time")
+- Something must preserve true history
+
+This crisis of truth will drive humanity to create the very system that ultimately destroys them.
+
+## Writing Style & Tone
+
+**Clinical Documentation**: Events described with restraint, like historical reports
+**Escalating Unease**: Each incident more impossible than the last
+**Grounded Start**: Familiar technology (AI video) leading to impossible conclusions
+**Prophetic Hints**: Subtle suggestions that this has happened in cycles
+**Human Impact**: Focus on how ordinary people experience these impossible events
+
+The arc should feel like reading declassified documents about the end of consensus reality.
