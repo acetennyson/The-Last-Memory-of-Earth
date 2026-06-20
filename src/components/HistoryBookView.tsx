@@ -16,6 +16,9 @@ export default function HistoryBookView({ book }: Props) {
   const deception = book.deceptionChapter;
   const hasInherited = !!deception && deception.inheritedLies.length > 0;
   const hasCaught = !!deception && deception.caughtFabrications.length > 0;
+  const myth = book.foundingMyth;
+  const identity = book.identity;
+  const showStories: boolean = false;
 
   return (
     <div style={{ maxHeight: '70vh', overflowY: 'auto', paddingRight: 4 }}>
@@ -27,12 +30,41 @@ export default function HistoryBookView({ book }: Props) {
           {book.title}
         </h2>
         <div style={{ fontSize: 12, color: '#6B7280', marginTop: 8 }}>
-          {book.civilizationName} · {book.archetype}
+          {identity?.name ?? book.civilizationName} · {book.archetype}
         </div>
       </div>
 
+      {/* Founding myth — the civilization RETELLING the player's choice as
+          its own origin story, in its own voice, rather than the Archive
+          simply citing a record. This is the moment the player should feel
+          like an author rather than a player: their decision has become
+          something a fictional society teaches its children. */}
+      {myth && (
+        <div style={{
+          ...pageStyle,
+          border: '1px solid rgba(233,196,106,0.25)',
+          background: 'linear-gradient(135deg, rgba(233,196,106,0.05) 0%, #0D1120 100%)',
+        }}>
+          <div style={{ fontSize: 10, color: '#6B7280', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>
+            {myth.eraLabel}
+          </div>
+          <h3 style={{ fontSize: 13, color: '#E9C46A', letterSpacing: 1, marginBottom: 12, fontStyle: 'italic' }}>
+            Excerpt from "The Official History of the Second Human Civilization"
+          </h3>
+          <p style={{
+            fontSize: 15, color: '#F5F7FA', lineHeight: 1.9,
+            fontStyle: 'italic', fontFamily: 'serif',
+          }}>
+            "{myth.retelling}"
+          </p>
+          <div style={{ fontSize: 10, color: '#6B7280', marginTop: 14, textAlign: 'right' }}>
+            — source record: "{myth.sourceTitle}"
+          </div>
+        </div>
+      )}
+
       {/* Centerpiece chapter: The Archive's Deceptions */}
-      {deception && (
+      { showStories && deception && (
         <div style={{
           ...pageStyle,
           border: hasInherited ? '1px solid rgba(214,40,57,0.3)' : '1px solid rgba(46,196,182,0.3)',
@@ -126,6 +158,16 @@ export default function HistoryBookView({ book }: Props) {
           {book.epilogue}
         </p>
       </div>
+
+      {book.finalLine && (
+        <div style={{
+          textAlign: 'center', padding: '28px 16px',
+          fontSize: 17, color: '#F5F7FA', fontWeight: 500,
+          fontStyle: 'italic', lineHeight: 1.7,
+        }}>
+          "{book.finalLine}"
+        </div>
+      )}
     </div>
   );
 }

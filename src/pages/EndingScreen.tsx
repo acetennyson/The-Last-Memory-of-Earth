@@ -14,12 +14,14 @@ export default function EndingScreen({ game }: { game: GameHook }) {
   const [displayText, setDisplayText] = useState('');
 
   const legacy = (game.ending as any)?.legacy;
+  const identity = (game.ending as any)?.identity;
+  const book = (game.ending as any)?.book;
   const definingMemory = legacy?.definingMemories?.[0];
   const totalFabricationsSeen = (legacy?.fabricatedPreserved?.length ?? 0) + (legacy?.fabricatedDiscarded?.length ?? 0);
 
   useEffect(() => {
-    const weightText = definingMemory
-      ? `You were the last voice. The final judge.\n\nWhat humanity becomes now begins with "${definingMemory.title}" — the memory you chose to carry forward above all others.`
+    const weightText = identity
+      ? `You were the last voice. The final judge.\n\nWhat emerged became known as ${identity.name}.`
       : 'You were the last voice. The final judge.\n\nWhat humanity becomes... depends on what you chose to remember.';
 
     const sequence = [
@@ -47,7 +49,7 @@ export default function EndingScreen({ game }: { game: GameHook }) {
     };
 
     progressSequence();
-  }, [definingMemory]);
+  }, [identity]);
 
   if (!game.ending) return null;
 
@@ -108,59 +110,94 @@ export default function EndingScreen({ game }: { game: GameHook }) {
     );
   }
 
-  // Final results with emotional impact
+  // Final results — identity and the one sentence that hurts come first.
+  // Statistics are demoted to the bottom, supporting the identity rather
+  // than leading with it, per the director's note that the player's first
+  // thought should be "what have I done," not "I got 82%."
   const { civilization: civ } = game.ending as any;
-  const civName = civ.civilization.civilizationName || 'Unknown Civilization';
+  const civName = identity?.name || civ.civilization.civilizationName || 'Unknown Civilization';
   const values = civ.civilization.values;
   const sorted = Object.entries(values).sort(([, a], [, b]) => (b as number) - (a as number));
   const coreValues = sorted.slice(0, 3);
-
   const discernmentPct = legacy ? Math.round(legacy.discernmentRate * 100) : null;
 
   return (
     <div style={{
       height: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: 40, maxWidth: 640, margin: '0 auto',
+      alignItems: 'center', justifyContent: 'flex-start',
+      padding: '40px 40px 60px', maxWidth: 640, margin: '0 auto',
       textAlign: 'center', overflowY: 'auto',
     }}>
-      <h2 style={{
-        fontSize: 22, fontWeight: 500, color: '#F5F7FA',
-        letterSpacing: 1, marginBottom: 8
-      }}>
-        Your Legacy Lives On
-      </h2>
-
-      <div style={{
-        fontSize: 13,
-        color: '#9CA3AF',
-        marginBottom: 32,
-        fontStyle: 'italic'
-      }}>
-        From the fragments you preserved, a new civilization emerges...
+      <div style={{ fontSize: 10, color: '#6B7280', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
+        Your civilization has emerged
       </div>
 
+      <h1 style={{
+        fontSize: 28, fontWeight: 600, color: '#F5F7FA',
+        letterSpacing: 0.5, marginBottom: 8, lineHeight: 1.3,
+      }}>
+        {civName}
+      </h1>
+
+      {identity && (
+        <div style={{ fontSize: 13, color: '#6CCBFF', fontStyle: 'italic', marginBottom: 36 }}>
+          {identity.tagline}
+        </div>
+      )}
+
+      {/* The one sentence that hurts — large, centered, the actual emotional
+          payload of finishing the game, before any numbers appear at all. */}
+      {book?.finalLine && (
+        <div style={{
+          fontSize: 20, lineHeight: 1.6, color: '#F5F7FA', fontWeight: 500,
+          maxWidth: 480, marginBottom: 40, fontStyle: 'italic',
+          opacity: 0, animation: 'finalLineFade 1.8s ease forwards',
+        }}>
+          "{book.finalLine}"
+        </div>
+      )}
+
+      {identity && (
+        <div style={{
+          width: '100%', textAlign: 'left',
+          background: 'rgba(17,22,39,0.5)', borderRadius: 12,
+          border: '1px solid rgba(108,203,255,0.12)',
+          padding: 22, marginBottom: 28,
+        }}>
+          <div style={{ fontSize: 13, color: '#D1D5DB', lineHeight: 1.8 }}>
+            {identity.description}
+          </div>
+        </div>
+      )}
+
+      {definingMemory && (
+        <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 28, lineHeight: 1.6, fontStyle: 'italic' }}>
+          Its founding myth traces back to a single choice: <em style={{ color: '#6CCBFF' }}>"{definingMemory.title}"</em>
+        </div>
+      )}
+
+      {/* Statistics — demoted, supporting evidence rather than the headline */}
       <div style={{
-        width: '100%', display: 'flex', justifyContent: 'center', gap: 32,
-        marginBottom: 32, padding: '20px 0',
+        width: '100%', display: 'flex', justifyContent: 'center', gap: 28,
+        marginBottom: 28, padding: '16px 0',
         borderTop: '1px solid rgba(108,203,255,0.08)',
         borderBottom: '1px solid rgba(108,203,255,0.08)',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 18, fontWeight: 600, color: '#2EC4B6' }}>{game.preservedCount}</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#2EC4B6' }}>{game.preservedCount}</div>
           <div style={{ fontSize: 9, color: '#6B7280', letterSpacing: 1, textTransform: 'uppercase', marginTop: 4 }}>
             Memories Saved
           </div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 18, fontWeight: 600, color: '#D62839' }}>{game.discardedCount}</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#D62839' }}>{game.discardedCount}</div>
           <div style={{ fontSize: 9, color: '#6B7280', letterSpacing: 1, textTransform: 'uppercase', marginTop: 4 }}>
             Let Go
           </div>
         </div>
         {totalFabricationsSeen > 0 && (
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 600, color: '#E9C46A' }}>{discernmentPct}%</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#E9C46A' }}>{discernmentPct}%</div>
             <div style={{ fontSize: 9, color: '#6B7280', letterSpacing: 1, textTransform: 'uppercase', marginTop: 4 }}>
               Lies Detected
             </div>
@@ -168,77 +205,25 @@ export default function EndingScreen({ game }: { game: GameHook }) {
         )}
       </div>
 
-      {/* Centerpiece: the deception verdict */}
-      {totalFabricationsSeen > 0 && (
-        <div style={{
-          width: '100%',
-          background: legacy.fabricatedPreserved.length > 0
-            ? 'linear-gradient(135deg, rgba(214,40,57,0.08) 0%, rgba(17,22,39,0.6) 100%)'
-            : 'linear-gradient(135deg, rgba(46,196,182,0.08) 0%, rgba(17,22,39,0.6) 100%)',
-          borderRadius: 12,
-          border: legacy.fabricatedPreserved.length > 0
-            ? '1px solid rgba(214,40,57,0.25)'
-            : '1px solid rgba(46,196,182,0.25)',
-          padding: 24, marginBottom: 32, textAlign: 'left',
-        }}>
-          <div style={{ fontSize: 11, color: '#E9C46A', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>
-            The Archive's Deceptions
-          </div>
-          {legacy.fabricatedPreserved.length > 0 && (
-            <div style={{ marginBottom: legacy.fabricatedDiscarded.length > 0 ? 14 : 0 }}>
-              <div style={{ fontSize: 13, color: '#F5F7FA', lineHeight: 1.7 }}>
-                You preserved <strong style={{ color: '#D62839' }}>{legacy.fabricatedPreserved.length}</strong> fabricated
-                memor{legacy.fabricatedPreserved.length === 1 ? 'y' : 'ies'} as truth, including{' '}
-                <em>"{legacy.fabricatedPreserved[0].title}."</em> It is load-bearing now. No one in the
-                civilization you built will ever know it never happened.
-              </div>
-            </div>
-          )}
-          {legacy.fabricatedDiscarded.length > 0 && (
-            <div style={{ fontSize: 13, color: '#F5F7FA', lineHeight: 1.7 }}>
-              You correctly identified and released <strong style={{ color: '#2EC4B6' }}>{legacy.fabricatedDiscarded.length}</strong> Archive
-              fabrication{legacy.fabricatedDiscarded.length === 1 ? '' : 's'}, including{' '}
-              <em>"{legacy.fabricatedDiscarded[0].title}."</em> No one will ever know how close it came to being believed.
-            </div>
-          )}
-        </div>
-      )}
-
       <div style={{
         width: '100%',
         background: 'rgba(17,22,39,0.6)', borderRadius: 12,
         border: '1px solid rgba(108,203,255,0.1)',
-        padding: 24, marginBottom: 32, textAlign: 'left',
+        padding: 20, marginBottom: 28, textAlign: 'left',
       }}>
-        <div style={{ fontSize: 11, color: '#6B7280', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>
-          The Civilization You Created
+        <div style={{ fontSize: 11, color: '#6B7280', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10 }}>
+          Values You Instilled
         </div>
-        <h3 style={{ fontSize: 18, fontWeight: 500, color: '#F5F7FA', marginBottom: 4 }}>
-          {civName}
-        </h3>
-        <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 16, lineHeight: 1.6 }}>
-          {civ.summary || civ.civilization.summary}
-        </div>
-        {definingMemory && (
-          <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 16, lineHeight: 1.6, paddingTop: 12, borderTop: '1px solid rgba(108,203,255,0.08)' }}>
-            Its founding myth traces to a single choice: <em style={{ color: '#6CCBFF' }}>"{definingMemory.title}"</em>
-          </div>
-        )}
-        <div style={{ marginTop: 12 }}>
-          <div style={{ fontSize: 11, color: '#6B7280', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6 }}>
-            Values You Instilled
-          </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {coreValues.map(([key]) => (
-              <span key={key} style={{
-                fontSize: 11, color: '#6CCBFF',
-                border: '1px solid rgba(108,203,255,0.15)',
-                borderRadius: 4, padding: '3px 10px',
-              }}>
-                {key.charAt(0).toUpperCase() + key.slice(1)}
-              </span>
-            ))}
-          </div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {coreValues.map(([key]) => (
+            <span key={key} style={{
+              fontSize: 11, color: '#6CCBFF',
+              border: '1px solid rgba(108,203,255,0.15)',
+              borderRadius: 4, padding: '3px 10px',
+            }}>
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -252,8 +237,15 @@ export default function EndingScreen({ game }: { game: GameHook }) {
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,203,255,0.1)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
       >
-        Preserve Your Legacy
+        Read the Chronicle
       </button>
+
+      <style>{`
+        @keyframes finalLineFade {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

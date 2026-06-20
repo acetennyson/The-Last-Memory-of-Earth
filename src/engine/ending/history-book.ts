@@ -1,6 +1,7 @@
 import type { CivilizationResult } from '../civilization/types';
 import type { PlayerProfile } from '../profile/types';
 import type { HistoricalEvent, ArchiveLegacy } from '../civilization/types';
+import type { CivilizationIdentity } from './civilization-identity';
 
 export interface HistoryBook {
   id?: string;
@@ -8,9 +9,12 @@ export interface HistoryBook {
   title: string;
   civilizationName: string;
   archetype: string;
+  identity?: CivilizationIdentity;
+  foundingMyth?: FoundingMyth;
   chapters: Chapter[];
   deceptionChapter?: DeceptionChapter;
   epilogue: string;
+  finalLine: string;
   generatedAt: string;
 }
 
@@ -31,11 +35,21 @@ export interface DeceptionChapter {
   paragraphs: string[];
 }
 
+export interface FoundingMyth {
+  eraLabel: string;
+  sourceTitle: string;
+  retelling: string;
+}
+
 export class HistoryBookGenerator {
-  generate(result: CivilizationResult, profile: PlayerProfile, legacy?: ArchiveLegacy): HistoryBook {
+  generate(result: CivilizationResult, profile: PlayerProfile, legacy?: ArchiveLegacy, identity?: CivilizationIdentity): HistoryBook {
     const civ = result.civilization;
+    const foundingMyth = legacy && legacy.definingMemories.length > 0
+      ? this.mythologize(legacy.definingMemories[0], identity)
+      : undefined;
+
     const chapters: Chapter[] = [
-      this.origins(profile, legacy),
+      this.origins(profile, legacy, identity),
       { title: 'Governance', summary: civ.government.replace(/_/g, ' ').toLowerCase() + ' system.', paragraphs: [`Society was governed as a ${civ.government.toLowerCase().replace(/_/g, ' ')}.`, civ.stabilityScore >= 60 ? 'The system proved remarkably stable.' : 'Internal tensions challenged the governing system.'] },
       { title: 'Society & Culture', summary: civ.culture.description, paragraphs: [`Culture was defined by ${civ.culture.orientation.toLowerCase().replace(/_/g, ' ')} values.`, `Education emphasized ${civ.education.scientificFocus >= 50 ? 'scientific inquiry' : 'historical preservation'}.`] },
       { title: 'Knowledge & Science', summary: civ.science.description, paragraphs: [`Scientific advancement reached a ${civ.science.level.toLowerCase().replace(/_/g, ' ')} level.`, 'The Archive\'s mission evolved into a civilization-wide commitment to understanding.'] },
@@ -49,23 +63,62 @@ export class HistoryBookGenerator {
       title: `The Rise of ${civ.civilizationName}`,
       civilizationName: civ.civilizationName,
       archetype: civ.archetype,
+      identity,
+      foundingMyth,
       chapters,
       deceptionChapter: legacy ? this.deceptionChapter(legacy) : undefined,
-      epilogue: this.epilogue(civ, legacy),
+      epilogue: this.epilogue(civ, legacy, identity),
+      finalLine: this.finalLine(legacy, identity),
       generatedAt: new Date().toISOString(),
     };
   }
 
-  private origins(profile: PlayerProfile, legacy?: ArchiveLegacy): Chapter {
-    const top = Object.entries(profile).sort(([, a], [, b]) => b - a).slice(0, 2);
+  /**
+   * The director's note: the civilization should RETELL the defining memory
+   * as its own founding myth, not just cite it as a historical reference.
+   * A society several generations removed from the event doesn't quote a
+   * record — it has a story about the record, worn smooth by repetition,
+   * shaped by whatever identity that civilization grew into.
+   */
+  private mythologize(memory: { title: string; summary: string }, identity?: CivilizationIdentity): FoundingMyth {
+    const eraLabel = identity ? `The Age of ${identity.name.replace(/^The /, '')}` : 'The First Age';
+    const id = identity?.id;
+
+    let frame: string;
+    switch (id) {
+      case 'KEEPERS_OF_TRUTH':
+        frame = `Our ancestors teach that "${memory.title}" did not mark a single moment — it marked the moment we stopped accepting a single moment as the whole story. We are still arguing about what really happened. We intend to keep arguing.`;
+        break;
+      case 'ETERNAL_EMPIRE':
+        frame = `Children are taught that "${memory.title}" marked the beginning of an order that has never since been questioned. They are not taught that it was ever questionable. There was a version of this story with more doubt in it. It did not survive.`;
+        break;
+      case 'GOLDEN_AGE':
+        frame = `We remember "${memory.title}" fondly, as the kind of story a flourishing people tell about their own beginning. We do not dwell on its harder edges. We chose, long ago, to let those go, the way you might set down something heavy on a long walk.`;
+        break;
+      case 'FRACTURED_ARCHIVE':
+        frame = `There are several tellings of "${memory.title}." Ask three households and you will hear three different beginnings. We are taught all of them, side by side, and asked to decide for ourselves which one feels true. No one has ever fully agreed.`;
+        break;
+      case 'SILENT_CIVILIZATION':
+        frame = `"${memory.title}" is taught as settled fact, the way every record here is taught as settled fact. No living person can tell you whether it occurred as written. No living person has reason to doubt it, either. That is the entire inheritance: certainty, with the proof quietly missing.`;
+        break;
+      default:
+        frame = `Our ancestors teach that "${memory.title}" marked the beginning of what we became — not a perfect beginning, not a singular one, but the one that was kept.`;
+    }
+
+    return { eraLabel, sourceTitle: memory.title, retelling: frame };
+  }
+
+  private origins(profile: PlayerProfile, legacy?: ArchiveLegacy, identity?: CivilizationIdentity): Chapter {
     const paragraphs = [
       'In the aftermath of the Archive\'s final transmission, a new civilization emerged from the preserved memories of humanity.',
-      `The founding generation was shaped by ${top[0][0]} and ${top[1]?.[0] || 'legacy'}, which became their cornerstone values.`,
     ];
-    if (legacy && legacy.preserved.length > 0) {
-      paragraphs.push(`Of everything available to it, the Archive chose to carry forward ${legacy.preserved.length} memories, and release ${legacy.discarded.length} others back into silence. Every founding belief this civilization holds about its own past traces back to that selection.`);
+    if (identity) {
+      paragraphs.push(`What emerged became known, in the records that survive, as ${identity.name}. ${identity.description}`);
     }
-    return { title: 'Origins', summary: 'The founding principles that shaped a civilization.', paragraphs };
+    if (legacy && legacy.preserved.length > 0) {
+      paragraphs.push(`Of everything available to it, the Archive chose to carry forward ${legacy.preserved.length} memories, and release the ${legacy.discarded.length || ''} others back into silence. Every founding belief this civilization holds about its own past traces back to that selection.`);
+    }
+    return { title: 'Origins', summary: identity?.tagline ?? 'The founding principles that shaped a civilization.', paragraphs };
   }
 
   private majorEvents(result: CivilizationResult, legacy?: ArchiveLegacy): Chapter {
@@ -138,14 +191,39 @@ export class HistoryBookGenerator {
     };
   }
 
-  private epilogue(civ: any, legacy?: ArchiveLegacy): string {
+  private epilogue(civ: any, legacy?: ArchiveLegacy, identity?: CivilizationIdentity): string {
+    if (identity) {
+      return `And so humanity continued — not as it was, but as it chose to remember itself. ${identity.epilogueTone}`;
+    }
     const base = `And so humanity continued — not as it was, but as it chose to remember itself. The ${civ.civilizationName} carried forward the Archive's legacy, building a future that honored the past while forging its own path.`;
     if (legacy && legacy.fabricatedPreserved.length > 0) {
       return `${base} Some of what it honored was never true. It will never know which parts. Neither will you.`;
     }
-    if (legacy && legacy.preserved.length > 0) {
-      return `${base} Every word of it traces back to a choice you made, memory by memory, when no one else could have made it instead.`;
-    }
     return base;
+  }
+
+  /**
+   * The director's request: one sentence that hurts, centered, large, before
+   * the statistics. This is identity-specific rather than generic, so it
+   * lands as a judgment on what was actually built, not a one-size-fits-all
+   * gut-punch line.
+   */
+  private finalLine(legacy?: ArchiveLegacy, identity?: CivilizationIdentity): string {
+    switch (identity?.id) {
+      case 'KEEPERS_OF_TRUTH':
+        return 'Truth did not survive intact. Only the willingness to keep questioning it did — and that, here, was enough.';
+      case 'ETERNAL_EMPIRE':
+        return 'The civilization you built remembered your choices. It forgot they had ever been choices.';
+      case 'GOLDEN_AGE':
+        return 'Centuries later, no one would know that your greatest comfort was built on something you chose not to carry.';
+      case 'FRACTURED_ARCHIVE':
+        return 'History was never settled here. That was not a failure. It may be the most honest thing you built.';
+      case 'SILENT_CIVILIZATION':
+        return 'The records remain. No one left can tell which ones were ever real — including, in the end, you.';
+      default:
+        return legacy && legacy.fabricatedPreserved.length > 0
+          ? 'Truth did not survive. Only what you preserved did.'
+          : 'History was never discovered here. It was selected — and you were the one selecting.';
+    }
   }
 }

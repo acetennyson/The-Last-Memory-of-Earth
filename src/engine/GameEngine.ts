@@ -2,7 +2,9 @@ import {
   Memory, Evidence, Contradiction, PlayerProfile,
   Session, Decision, NarrativeState, CuriosityProfile,
   CivilizationResult, HistoryBook, ArchiveLegacy,
+  CivilizationIdentity,
 } from './index';
+import { computeCivilizationIdentity } from './ending/civilization-identity';
 import { DecisionType, SessionStatus, EvidenceTier, NarrativePhase } from './shared/enums';
 import { createSession } from './session/types';
 import { generateId } from './shared/utils';
@@ -105,7 +107,7 @@ export class GameEngine {
     return { revelations, contradictions };
   }
 
-  generateEnding(pool: Memory[]): { civilization: CivilizationResult; book: HistoryBook; legacy: ArchiveLegacy } {
+  generateEnding(pool: Memory[]): { civilization: CivilizationResult; book: HistoryBook; legacy: ArchiveLegacy; identity: CivilizationIdentity } {
     this.session.status = SessionStatus.COMPLETED;
 
     const byId = new Map(pool.map(m => [m.id, m]));
@@ -145,9 +147,16 @@ export class GameEngine {
         : 1,
     };
 
+    // Identity is computed from the FULL six-value profile pattern plus
+    // corruption/deception signal — not from a single dominant stat (that's
+    // what civGen's internal pickArchetype still does, for flavor fields
+    // like government/culture). Identity is specifically the ending-level
+    // narrative judgment the player actually sees and remembers.
+    const identity = computeCivilizationIdentity(this.session.profile, legacy);
+
     const civ = this.civGen.generate(this.session.profile, legacy);
-    const book = this.bookGen.generate(civ, this.session.profile, legacy);
-    return { civilization: civ, book, legacy };
+    const book = this.bookGen.generate(civ, this.session.profile, legacy, identity);
+    return { civilization: civ, book, legacy, identity };
   }
 
   canEnd(): boolean {
