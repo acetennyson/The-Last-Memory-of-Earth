@@ -91,7 +91,7 @@ The program was considered one of the greatest educational innovations in human 
       power: 1,
       legacy: -4
     },
-    corruptionScore: 4,
+    corruptionScore: 2,
     truthScore: 58,
     investigationCost: 25,
     evidenceIds: ["ev_arc2_004_education", "ev_arc2_004_parents", "ev_arc2_004_children", "ev_arc2_004_suppressed"],
@@ -206,7 +206,7 @@ The debate continued as the industry established itself as a permanent part of m
       power: 2,
       legacy: -3
     },
-    corruptionScore: 5,
+    corruptionScore: 1,
     truthScore: 45,
     investigationCost: 28,
     evidenceIds: ["ev_arc2_005_corporate", "ev_arc2_005_customers", "ev_arc2_005_blackmarket", "ev_arc2_005_artificial"],
@@ -320,7 +320,7 @@ Most experts agreed that the system had solved fundamental problems in data orga
       power: 4,
       legacy: -5
     },
-    corruptionScore: 3,
+    corruptionScore: 0,
     truthScore: 92,
     investigationCost: 35,
     evidenceIds: ["ev_arc2_006_system", "ev_arc2_006_researchers", "ev_arc2_006_reconstructed", "ev_arc2_006_vasquez"],

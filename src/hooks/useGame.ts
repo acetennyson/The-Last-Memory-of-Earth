@@ -173,24 +173,32 @@ export function useGame() {
     }
   }, [investigationStep, totalInvestigationSteps, contradictions.length, contradictionsRevealed]);
 
+  const goToNextMemory = useCallback((updatedPreserved: Set<string>, updatedDiscarded: Set<string>) => {
+    const next = historicalContent.memories.find((m: any) => {
+      if (updatedPreserved.has(m.id) || updatedDiscarded.has(m.id)) return false;
+      if (m.dependsOn && !m.dependsOn.every((depId: string) => updatedPreserved.has(depId))) return false;
+      if (m.minInvestigations && investigationCount < m.minInvestigations) return false;
+      return true;
+    });
+    if (next) {
+      setMemory(next);
+      setStage(GameState.MEMORY);
+    } else {
+      setStage(GameState.ARCHIVE);
+    }
+  }, [investigationCount]);
+
   const preserve = useCallback(() => {
     if (memory) {
       const newPreservedMemories = new Set(preservedMemories).add(memory.id);
       setPreservedMemories(newPreservedMemories);
       
-      // Check for newly unlocked memories
       const newlyUnlocked = historicalContent.memories.filter((m: any) => {
-        // Skip if already unlocked
         if (!m.dependsOn || newPreservedMemories.has(m.id)) return false;
-        
-        // Check if all dependencies are now preserved
         const dependenciesMet = m.dependsOn.every((depId: string) => newPreservedMemories.has(depId));
         const investigationsMet = !m.minInvestigations || investigationCount >= m.minInvestigations;
-        
-        // Check if was previously locked
         const wasLocked = m.dependsOn.some((depId: string) => !preservedMemories.has(depId)) || 
                          (m.minInvestigations && investigationCount < m.minInvestigations);
-        
         return dependenciesMet && investigationsMet && wasLocked;
       });
       
@@ -199,16 +207,17 @@ export function useGame() {
         setTimeout(() => setMessage(''), 3000);
       }
       
-      // setStage(GameState.ARCHIVE);
+      goToNextMemory(newPreservedMemories, discardedMemories);
     }
-  }, [memory, preservedMemories, investigationCount]);
+  }, [memory, preservedMemories, discardedMemories, investigationCount, goToNextMemory]);
 
   const discard = useCallback(() => {
     if (memory) {
-      setDiscardedMemories(prev => new Set(prev).add(memory.id));
-      setStage(GameState.ARCHIVE);
+      const newDiscardedMemories = new Set(discardedMemories).add(memory.id);
+      setDiscardedMemories(newDiscardedMemories);
+      goToNextMemory(preservedMemories, newDiscardedMemories);
     }
-  }, [memory]);
+  }, [memory, preservedMemories, discardedMemories, goToNextMemory]);
 
   const continueFromCorruption = useCallback(() => {
     setStage(GameState.MEMORY);
