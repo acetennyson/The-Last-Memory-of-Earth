@@ -116,7 +116,7 @@ export class HistoryBookGenerator {
       paragraphs.push(`What emerged became known, in the records that survive, as ${identity.name}. ${identity.description}`);
     }
     if (legacy && legacy.preserved.length > 0) {
-      paragraphs.push(`Of everything available to it, the Archive chose to carry forward ${legacy.preserved.length} memories, and release the ${legacy.discarded.length || ''} others back into silence. Every founding belief this civilization holds about its own past traces back to that selection.`);
+      paragraphs.push(`Of everything available to it, the Archive chose to carry forward ${legacy.preserved.length} memories, and release ${legacy.discarded.length} others back into silence. Every founding belief this civilization holds about its own past traces back to that selection.`);
     }
     return { title: 'Origins', summary: identity?.tagline ?? 'The founding principles that shaped a civilization.', paragraphs };
   }

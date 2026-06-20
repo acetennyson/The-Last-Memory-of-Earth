@@ -31,12 +31,18 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
   };
 
   const handlePathSelected = (pathId: string) => {
-    setShowPathSelection(false);
-    setShowReconstruction(false);
-    // Ensure clean state before investigation
-    setTimeout(() => {
-      game.investigateWithPath(pathId);
-    }, 100);
+    // Don't hide path selection optimistically — investigateWithPath can
+    // fail (insufficient power, no evidence for this path) and previously
+    // the screen would silently drop back to the memory view either way,
+    // with the player having no idea whether anything happened.
+    const succeeded = game.investigateWithPath(pathId);
+    if (succeeded) {
+      setShowPathSelection(false);
+      setShowReconstruction(false);
+    }
+    // On failure, game.message is already set by investigateWithPath and
+    // the path selection screen stays open so the player can pick another
+    // path or back out, instead of getting bounced to a blank state.
   };
 
   // Check if memory has evidence available for investigation

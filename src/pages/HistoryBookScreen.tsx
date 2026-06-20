@@ -47,9 +47,19 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
     };
 
     pushWrapped('Archive Unit A-01 — Final Report', '12px monospace', '#6CCBFF', 28);
-    pushWrapped(book.title, '24px serif', '#F5F7FA', 8);
+    pushWrapped(book.title, '24px serif', '#F5F7FA', 4);
+    if (book.identity) {
+      pushWrapped(book.identity.name, '18px serif', '#E9C46A', 4);
+      pushWrapped(book.identity.tagline, '12px sans-serif', '#9CA3AF', 24);
+    }
     pushWrapped(`${book.civilizationName} · ${book.archetype}`, '13px sans-serif', '#9CA3AF', 28);
     pushWrapped(`Memories Preserved: ${game.preservedCount}    Memories Released: ${game.discardedCount}`, '13px monospace', '#9CA3AF', 28);
+
+    if (book.foundingMyth) {
+      pushWrapped(book.foundingMyth.eraLabel.toUpperCase(), '12px monospace', '#6B7280', 4);
+      pushWrapped('EXCERPT FROM "THE OFFICIAL HISTORY OF THE SECOND HUMAN CIVILIZATION"', '11px monospace', '#E9C46A', 8);
+      pushWrapped(`"${book.foundingMyth.retelling}"`, '14px serif', '#F5F7FA', 28);
+    }
 
     if (deception) {
       pushWrapped('THE ARCHIVE\'S DECEPTIONS', '13px monospace', '#E9C46A', 6);
@@ -72,6 +82,10 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
 
     pushWrapped('EPILOGUE', '13px monospace', '#E9C46A', 6);
     pushWrapped(book.epilogue, '13px sans-serif', '#D1D5DB', 10);
+
+    if (book.finalLine) {
+      pushWrapped(`"${book.finalLine}"`, '16px serif', '#F5F7FA', 8);
+    }
 
     const topMargin = 40;
     const bottomMargin = 40;
@@ -104,6 +118,10 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
     let content = `THE LAST MEMORY OF EARTH\n`;
     content += `Archive Unit A-01 — Final Report\n\n`;
     content += `${book.title}\n`;
+    if (book.identity) {
+      content += `${book.identity.name}\n`;
+      content += `${book.identity.tagline}\n`;
+    }
     content += `Civilization: ${book.civilizationName}\n`;
     content += `Archetype: ${book.archetype}\n\n`;
     content += `═══════════════════════════════════════\n\n`;
@@ -112,6 +130,14 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
     content += `• Memories Preserved: ${game.preservedCount}\n`;
     content += `• Memories Released: ${game.discardedCount}\n`;
     content += `• Total Investigated: ${game.processed}\n\n`;
+
+    if (book.foundingMyth) {
+      content += `═══════════════════════════════════════\n`;
+      content += `${book.foundingMyth.eraLabel.toUpperCase()}\n`;
+      content += `Excerpt from "The Official History of the Second Human Civilization"\n\n`;
+      content += `"${book.foundingMyth.retelling}"\n\n`;
+      content += `— source record: "${book.foundingMyth.sourceTitle}"\n\n`;
+    }
 
     const deception = book.deceptionChapter;
     if (deception) {
@@ -145,7 +171,7 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
 
     content += `EPILOGUE:\n${book.epilogue}\n\n`;
     content += `═══════════════════════════════════════\n`;
-    content += `"Humanity is remembered. Not as it was.\nBut as you chose to preserve it."\n`;
+    content += `"${book.finalLine ?? 'Humanity is remembered. Not as it was. But as you chose to preserve it.'}"\n`;
     content += `\nGenerated: ${new Date().toLocaleDateString()}\n`;
 
     const blob = new Blob([content], { type: 'text/plain' });
@@ -170,15 +196,15 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
         border: '1px solid rgba(108,203,255,0.2)',
         borderRadius: 8,
       }}>
-        <div style={{ fontSize: 24, marginBottom: 8 }}>🏆</div>
+        <div style={{ fontSize: 24, marginBottom: 8 }}>📜</div>
         <div style={{
           fontSize: 12, color: '#E9C46A', letterSpacing: 2,
           textTransform: 'uppercase', fontWeight: 600, marginBottom: 4,
         }}>
-          Archive Achievement Unlocked
+          The Chronicle Is Complete
         </div>
         <div style={{ fontSize: 13, color: '#F5F7FA', fontStyle: 'italic' }}>
-          You have completed humanity's final archive
+          History was never discovered. It was selected — by you.
         </div>
       </div>
 
@@ -187,10 +213,6 @@ export default function HistoryBookScreen({ game }: { game: GameHook }) {
       </div>
 
       <div style={{ marginTop: 24, textAlign: 'center' }}>
-        <div style={{ fontSize: 12, color: '#F5F7FA', fontStyle: 'italic', marginBottom: 20, lineHeight: 1.7 }}>
-          "Humanity is remembered. Not as it was. But as you chose to preserve it."
-        </div>
-
         <div style={{
           display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16,
           padding: 12, background: 'rgba(17,22,39,0.4)', borderRadius: 8,

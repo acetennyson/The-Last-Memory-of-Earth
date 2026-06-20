@@ -41,21 +41,23 @@ export function useGame() {
   }, []);
 
   const investigateWithPath = useCallback((pathId: string) => {
-    // Check if enough power for investigation
-    if (power < 10) {
-      setMessage('Insufficient archive power for deep scan.');
-      setTimeout(() => setMessage(''), 1500);
-      return;
+    if (!memory) return false;
+
+    // Use the memory's own authored cost rather than a hardcoded number —
+    // this was previously inconsistent (UI advertised 5, gate checked 10),
+    // which let players with just enough power to pass the UI's display
+    // but not the gate get silently bounced with no visible feedback.
+    const cost = memory.investigationCost ?? 10;
+
+    if (power < cost) {
+      setMessage(`Insufficient archive power for deep scan. (${cost} required, ${power} remaining)`);
+      setTimeout(() => setMessage(''), 2000);
+      return false;
     }
-    
-    // Consume power for deep investigation
-    setPower(p => Math.max(0, p - 10));
-    
-    // Increment investigation count
+
+    setPower(p => Math.max(0, p - cost));
     setInvestigationCount(count => count + 1);
-    
-    if (!memory) return;
-    
+
     // Get evidence for the current memory from historical content
     const getEvidenceForMemory = (memoryId: string) => {
       // Select truth pattern for this investigation
@@ -72,7 +74,6 @@ export function useGame() {
       };
       
       const selectedPattern = getRandomPattern(memoryId);
-      console.log('Selected truth pattern:', selectedPattern, 'for memory:', memoryId);
       
       // Get evidence based on selected pattern
       if (memoryId === 'mem_broadcast_001') {
@@ -113,12 +114,7 @@ export function useGame() {
     };
     
     const filteredEvidence = getEvidenceForPath(pathId, memoryEvidence);
-    
-    // Debug info
-    console.log('PathId:', pathId);
-    console.log('Memory Evidence:', memoryEvidence.map(e => ({id: e.id, sourceType: e.sourceType})));
-    console.log('Filtered Evidence:', filteredEvidence.map(e => ({id: e.id, sourceType: e.sourceType})));
-    
+
     if (filteredEvidence.length > 0) {
       setEvidenceRecords(filteredEvidence);
       setContradictions([]);
@@ -126,28 +122,18 @@ export function useGame() {
       setTotalInvestigationSteps(filteredEvidence.length);
       setContradictionsRevealed(false);
       setStage(GameState.INVESTIGATION);
-      return;
-    } else {
-      // If no evidence found for this path, show a message
-      setMessage(`No evidence available for ${pathId} investigation path.`);
-      setTimeout(() => setMessage(''), 2000);
-      return;
+      return true;
     }
-    
-    // Fallback for other memories
-    const result = engine.investigate() as any;
-    if (result) {
-      const records = result.revelations?.map((r: any) => r.evidence as Evidence) || [];
-      setEvidenceRecords(records);
-      setContradictions(result.contradictions || []);
-      setInvestigationStep(0);
-      setTotalInvestigationSteps(records.length);
-      setStage(GameState.INVESTIGATION);
-    } else {
-      setMessage('No evidence found.');
-      setTimeout(() => setMessage(''), 1500);
-    }
-  }, [engine, memory, power]);
+
+    // No evidence matched this specific path for this memory. Power and the
+    // investigation count were already spent above — investigating is a
+    // real action with a real cost even when a particular path comes up
+    // empty, the same way it would in-fiction. We still need to tell the
+    // caller this failed so the UI doesn't silently sit on a stale screen.
+    setMessage(`No evidence available for ${pathId} investigation path.`);
+    setTimeout(() => setMessage(''), 2000);
+    return false;
+  }, [memory, power]);
 
   const backFromInvestigation = useCallback(() => {
     setStage(GameState.MEMORY);

@@ -167,7 +167,7 @@ export default function InvestigationPathSelection({
           color: isLowPower ? powerWarning?.color : '#6B7280',
           fontStyle: 'italic',
         }}>
-          Investigation Cost: 5 Archive Power ({currentPower}/100 remaining)
+          Investigation Cost: {game.memory?.investigationCost ?? 10} Archive Power ({currentPower}/100 remaining)
         </div>
       </div>
 
@@ -187,23 +187,29 @@ export default function InvestigationPathSelection({
             No investigation paths available for this memory.
           </div>
         ) : (
-          availablePaths.map((path: any) => (
+          availablePaths.map((path: any) => {
+          const cost = game.memory?.investigationCost ?? 10;
+          const canAfford = currentPower >= cost;
+          return (
           <button
             key={path.id}
-            onClick={() => onSelectPath(path.id)}
+            onClick={() => { if (canAfford) onSelectPath(path.id); }}
+            disabled={!canAfford}
             style={{
               background: 'linear-gradient(135deg, #111627 0%, #0D1120 100%)',
               border: `1px solid ${path.color}20`,
               borderRadius: 12,
               padding: 20,
               textAlign: 'left',
-              cursor: 'pointer',
+              cursor: canAfford ? 'pointer' : 'not-allowed',
+              opacity: canAfford ? 1 : 0.45,
               transition: 'all 0.2s',
               display: 'flex',
               alignItems: 'center',
               gap: 16,
             }}
             onMouseEnter={e => {
+              if (!canAfford) return;
               e.currentTarget.style.border = `1px solid ${path.color}40`;
               e.currentTarget.style.background = `linear-gradient(135deg, #111627 0%, ${path.color}08 100%)`;
               e.currentTarget.style.transform = 'translateY(-2px)';
@@ -239,9 +245,15 @@ export default function InvestigationPathSelection({
               }}>
                 {path.description}
               </div>
+              {!canAfford && (
+                <div style={{ fontSize: 10, color: '#D62839', marginTop: 6, letterSpacing: 0.5 }}>
+                  Requires {cost} power — only {currentPower} remaining
+                </div>
+              )}
             </div>
           </button>
-        ))
+          );
+        })
         )}
       </div>
 

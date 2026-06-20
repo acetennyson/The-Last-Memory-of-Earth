@@ -18,7 +18,6 @@ export default function HistoryBookView({ book }: Props) {
   const hasCaught = !!deception && deception.caughtFabrications.length > 0;
   const myth = book.foundingMyth;
   const identity = book.identity;
-  const showStories: boolean = false;
 
   return (
     <div style={{ maxHeight: '70vh', overflowY: 'auto', paddingRight: 4 }}>
@@ -64,7 +63,7 @@ export default function HistoryBookView({ book }: Props) {
       )}
 
       {/* Centerpiece chapter: The Archive's Deceptions */}
-      { showStories && deception && (
+      {deception && (
         <div style={{
           ...pageStyle,
           border: hasInherited ? '1px solid rgba(214,40,57,0.3)' : '1px solid rgba(46,196,182,0.3)',
