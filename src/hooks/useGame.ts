@@ -199,7 +199,7 @@ export function useGame() {
         setTimeout(() => setMessage(''), 3000);
       }
       
-      setStage(GameState.ARCHIVE);
+      // setStage(GameState.ARCHIVE);
     }
   }, [memory, preservedMemories, investigationCount]);
 

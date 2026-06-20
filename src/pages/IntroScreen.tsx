@@ -12,11 +12,12 @@ export default function IntroScreen({ onStart }: Props) {
     <div className="cyber-container">
       <MatrixBackground />
       <div style={{
-        minHeight: '100vh',
+        height: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 24,
+        overflowY: 'auto',
       }}>
         <div className="cyber-screen cyber-scanlines" style={{
           maxWidth: 800,
