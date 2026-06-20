@@ -173,6 +173,40 @@ export function useGame() {
     }
   }, [investigationStep, totalInvestigationSteps, contradictions.length, contradictionsRevealed]);
 
+  const buildEnding = useCallback((finalPreserved: Set<string>, finalDiscarded: Set<string>) => {
+    // Profile is derived here (rather than inside the engine) because this
+    // version of the hook tracks preserve/discard decisions independently
+    // of engine.preserve()/discard() — the engine's session never saw these
+    // decisions as they happened, so we replay them onto it now, once,
+    // immediately before asking it to generate the ending. This keeps a
+    // single source of truth: the engine's generateEnding() owns all
+    // legacy/fabrication computation; the hook only supplies the final
+    // preserved/discarded id lists and the resulting profile.
+    let profile: PlayerProfile = { compassion: 50, progress: 50, truth: 50, freedom: 50, power: 50, legacy: 50 };
+    const byId = new Map(historicalContent.memories.map((m: any) => [m.id, m]));
+    for (const id of finalPreserved) {
+      const mem = byId.get(id) as any;
+      if (mem?.impact) {
+        profile = {
+          compassion: Math.max(0, Math.min(100, profile.compassion + (mem.impact.compassion || 0))),
+          progress: Math.max(0, Math.min(100, profile.progress + (mem.impact.progress || 0))),
+          truth: Math.max(0, Math.min(100, profile.truth + (mem.impact.truth || 0))),
+          freedom: Math.max(0, Math.min(100, profile.freedom + (mem.impact.freedom || 0))),
+          power: Math.max(0, Math.min(100, profile.power + (mem.impact.power || 0))),
+          legacy: Math.max(0, Math.min(100, profile.legacy + (mem.impact.legacy || 0))),
+        };
+      }
+    }
+
+    (engine as any).session.profile = profile;
+    (engine as any).session.preservedMemoryIds = Array.from(finalPreserved);
+    (engine as any).session.discardedMemoryIds = Array.from(finalDiscarded);
+
+    const result = engine.generateEnding(historicalContent.memories as any) as any;
+    setEnding(result);
+    setStage(GameState.ENDING);
+  }, [engine]);
+
   const goToNextMemory = useCallback((updatedPreserved: Set<string>, updatedDiscarded: Set<string>) => {
     const next = historicalContent.memories.find((m: any) => {
       if (updatedPreserved.has(m.id) || updatedDiscarded.has(m.id)) return false;
@@ -183,10 +217,14 @@ export function useGame() {
     if (next) {
       setMemory(next);
       setStage(GameState.MEMORY);
-    } else {
-      setStage(GameState.ARCHIVE);
+      return;
     }
-  }, [investigationCount]);
+
+    // No eligible next memory remains — either everything has been
+    // processed, or what's left is locked behind dependencies the player
+    // can no longer satisfy this run. Either way, the run ends here.
+    buildEnding(updatedPreserved, updatedDiscarded);
+  }, [investigationCount, buildEnding]);
 
   const preserve = useCallback(() => {
     if (memory) {
