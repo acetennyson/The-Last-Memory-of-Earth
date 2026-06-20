@@ -329,7 +329,8 @@ Most experts agreed that the system had solved fundamental problems in data orga
     tags: ["archive", "autonomous", "reconstruction", "consciousness", "2104"],
     era: "2104",
     dependsOn: ["arc2_mem_001"],
-    minInvestigations: 3,
+    minInvestigations: 2,
+    criticalDependency: false,
     investigationPaths: [
       {
         id: 'ai_logs',
