@@ -112,7 +112,9 @@ No authorization documents remain.
         description: 'Business records, internal memos, financial data',
         evidenceIds: ['ev_tax_002']
       }
-    ]
+    ],
+    dependsOn: ['arc2_mem_001'],
+    criticalDependency: false
   },
 
   {
@@ -248,7 +250,7 @@ Partial quotes leaked to media suggest she provided specific details about:
         evidenceIds: ['ev_prophet_004'] 
       }
     ],
-    dependsOn: ['mem_tax_001'], // Unlocked after Memory Tax preserved
+    dependsOn: ['mem_tax_001', 'arc2_mem_001'], // Unlocked after Memory Tax preserved
     minInvestigations: 1,
     criticalDependency: false // If Memory Tax discarded, this can still unlock later
   }

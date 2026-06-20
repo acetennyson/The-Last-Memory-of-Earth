@@ -84,6 +84,7 @@ By 2065, the agency had grown from a small administrative body to a major govern
     corruptionIds: [],
     tags: ["government", "verification", "vasquez", "2062"],
     era: "2062",
+    dependsOn: ['arc1_revelation'],
     investigationPaths: [
       {
         id: 'government',
@@ -187,6 +188,7 @@ The digitization program continued without further major incidents.`,
     corruptionIds: [],
     tags: ["digitization", "resistance", "chen", "books", "2067"],
     era: "2067",
+    dependsOn: ['arc2_mem_001'],
     investigationPaths: [
       {
         id: 'corporate',
@@ -290,6 +292,7 @@ Critics raised concerns about the authenticity of preserved consciousness, but t
     corruptionIds: [],
     tags: ["consciousness", "morrison", "preservation", "digital", "2078"],
     era: "2078",
+    dependsOn: ['arc2_mem_001'],
     investigationPaths: [
       {
         id: 'ai_logs',

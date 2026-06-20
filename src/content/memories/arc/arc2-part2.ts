@@ -112,7 +112,9 @@ The program was considered one of the greatest educational innovations in human 
         description: 'Child development and memory dependency research',
         evidenceIds: arc2Evidence.filter(ev => ['ev_arc2_004_medical', 'ev_arc2_004_studies', 'ev_arc2_004_vasquez'].includes(ev.id)).map(ev => ev.id)
       }
-    ]
+    ],
+    dependsOn: ['arc2_mem_003'], // Unlocked after Memory Tax preserved
+    criticalDependency: false // If Memory Tax discarded, this can still unlock later
   },
 
   {
@@ -212,6 +214,7 @@ The debate continued as the industry established itself as a permanent part of m
     corruptionIds: [],
     tags: ["experience", "memory", "commercial", "artificial", "2095"],
     era: "2095",
+    dependsOn: ['arc2_mem_003'],
     investigationPaths: [
       {
         id: 'corporate',
