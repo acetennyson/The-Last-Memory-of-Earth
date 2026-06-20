@@ -10,6 +10,8 @@ export interface Session {
   investigationsRemaining: number;
   profile: PlayerProfile;
   processedMemoryIds: UUID[];
+  preservedMemoryIds: UUID[];
+  discardedMemoryIds: UUID[];
   status: SessionStatus;
   narrativePhase: NarrativePhase;
   createdAt: string;
@@ -24,6 +26,8 @@ export function createSession(id: UUID): Session {
     investigationsRemaining: 20,
     profile: { compassion: 50, progress: 50, truth: 50, freedom: 50, power: 50, legacy: 50 },
     processedMemoryIds: [],
+    preservedMemoryIds: [],
+    discardedMemoryIds: [],
     status: SessionStatus.ACTIVE,
     narrativePhase: NarrativePhase.INTRODUCTION,
     createdAt: new Date().toISOString(),

@@ -1,7 +1,7 @@
 import {
   Memory, Evidence, Contradiction, PlayerProfile,
   Session, Decision, NarrativeState, CuriosityProfile,
-  CivilizationResult, HistoryBook,
+  CivilizationResult, HistoryBook, ArchiveLegacy,
 } from './index';
 import { DecisionType, SessionStatus, EvidenceTier, NarrativePhase } from './shared/enums';
 import { createSession } from './session/types';
@@ -73,11 +73,13 @@ export class GameEngine {
     const decision: Decision = { memoryId: this.currentMemory.id, decisionType: DecisionType.PRESERVE, timestamp: new Date().toISOString() };
     this.session.profile = this.profileSvc.applyDecision(this.session.profile, this.currentMemory.impact, decision);
     this.session.capacityRemaining--;
+    this.session.preservedMemoryIds.push(this.currentMemory.id);
     return { decision, profile: this.session.profile };
   }
 
   discard(): { decision: Decision } | null {
     if (!this.currentMemory) return null;
+    this.session.discardedMemoryIds.push(this.currentMemory.id);
     return { decision: { memoryId: this.currentMemory.id, decisionType: DecisionType.DISCARD, timestamp: new Date().toISOString() } };
   }
 
@@ -103,11 +105,49 @@ export class GameEngine {
     return { revelations, contradictions };
   }
 
-  generateEnding(): { civilization: CivilizationResult; book: HistoryBook } {
+  generateEnding(pool: Memory[]): { civilization: CivilizationResult; book: HistoryBook; legacy: ArchiveLegacy } {
     this.session.status = SessionStatus.COMPLETED;
-    const civ = this.civGen.generate(this.session.profile);
-    const book = this.bookGen.generate(civ, this.session.profile);
-    return { civilization: civ, book };
+
+    const byId = new Map(pool.map(m => [m.id, m]));
+    const preserved = this.session.preservedMemoryIds.map(id => byId.get(id)).filter(Boolean) as Memory[];
+    const discarded = this.session.discardedMemoryIds.map(id => byId.get(id)).filter(Boolean) as Memory[];
+
+    // A memory counts as "fabricated" if its truthScore is meaningfully below
+    // the genuine-content baseline (~90+). corruptionScore is the strength of
+    // the signal; truthScore < 85 is the practical cutoff for the fabricated
+    // and bridge-anomaly content authored so far.
+    const isFabricated = (m: Memory) => (m.truthScore ?? 100) < 85;
+
+    const fabricatedPreserved = preserved.filter(isFabricated);   // caught nothing: preserved a lie as truth
+    const fabricatedDiscarded = discarded.filter(isFabricated);   // correctly rejected a fabrication
+    const genuinePreserved = preserved.filter(m => !isFabricated(m));
+    const genuineDiscarded = discarded.filter(m => !isFabricated(m)); // lost something real
+
+    // Rank preserved genuine memories by decisionWeight/corruptionScore proxy
+    // for "most consequential" — highest impact magnitude, ties broken by
+    // investigation cost (a stand-in for narrative depth/rarity).
+    const impactMagnitude = (m: Memory) => Object.values(m.impact || {}).reduce((s: number, v: any) => s + Math.abs(Number(v) || 0), 0);
+    const rankedPreserved = [...genuinePreserved].sort((a, b) => impactMagnitude(b) - impactMagnitude(a));
+    const rankedDiscarded = [...genuineDiscarded].sort((a, b) => impactMagnitude(b) - impactMagnitude(a));
+
+    const legacy: ArchiveLegacy = {
+      preserved,
+      discarded,
+      fabricatedPreserved,
+      fabricatedDiscarded,
+      genuinePreserved,
+      genuineDiscarded,
+      definingMemories: rankedPreserved.slice(0, 3),
+      mostMournedLoss: rankedDiscarded[0] ?? null,
+      deceptionRate: preserved.length > 0 ? fabricatedPreserved.length / preserved.length : 0,
+      discernmentRate: (fabricatedPreserved.length + fabricatedDiscarded.length) > 0
+        ? fabricatedDiscarded.length / (fabricatedPreserved.length + fabricatedDiscarded.length)
+        : 1,
+    };
+
+    const civ = this.civGen.generate(this.session.profile, legacy);
+    const book = this.bookGen.generate(civ, this.session.profile, legacy);
+    return { civilization: civ, book, legacy };
   }
 
   canEnd(): boolean {

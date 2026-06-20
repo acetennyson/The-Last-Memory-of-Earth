@@ -3,6 +3,20 @@ import {
   ScienceLevel, MilitaryPosture, EnvironmentalPolicy, MediaState,
 } from '../shared/enums';
 import type { ImpactVector, UUID } from '../shared/types';
+import type { Memory } from '../memory/types';
+
+export interface ArchiveLegacy {
+  preserved: Memory[];
+  discarded: Memory[];
+  fabricatedPreserved: Memory[];   // fabrications the player preserved as truth — undetected deception
+  fabricatedDiscarded: Memory[];   // fabrications the player correctly rejected
+  genuinePreserved: Memory[];
+  genuineDiscarded: Memory[];      // real history the player let go
+  definingMemories: Memory[];      // top 3 highest-impact genuine preserved memories
+  mostMournedLoss: Memory | null;  // highest-impact genuine memory discarded
+  deceptionRate: number;           // fraction of preserved memories that were fabricated
+  discernmentRate: number;         // fraction of all fabrications encountered that were correctly caught
+}
 
 export interface Civilization {
   id?: UUID;

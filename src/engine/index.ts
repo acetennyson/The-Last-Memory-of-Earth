@@ -6,9 +6,9 @@ export type { PlayerProfile, Decision } from './profile/types';
 export { createProfile, applyImpact } from './profile/types';
 export type { Session } from './session/types';
 export { createSession } from './session/types';
-export type { Civilization, CivilizationResult, HistoricalEvent } from './civilization/types';
+export type { Civilization, CivilizationResult, HistoricalEvent, ArchiveLegacy } from './civilization/types';
 export type { NarrativeState, CuriosityProfile } from './civilization/narrative-state';
-export type { HistoryBook, Chapter } from './ending/history-book';
+export type { HistoryBook, Chapter, DeceptionChapter } from './ending/history-book';
 export { GameEngine } from './GameEngine';
 export type { GameContent } from './GameEngine';
 

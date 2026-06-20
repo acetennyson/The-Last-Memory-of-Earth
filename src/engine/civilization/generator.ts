@@ -3,19 +3,19 @@ import {
   GovernmentType, EconomyType, CivilizationArchetype, CultureOrientation,
   ScienceLevel, MilitaryPosture, EnvironmentalPolicy, MediaState,
 } from '../shared/enums';
-import type { Civilization, CivilizationResult, HistoricalEvent } from './types';
+import type { Civilization, CivilizationResult, HistoricalEvent, ArchiveLegacy } from './types';
 
 export class CivilizationGenerator {
-  generate(profile: PlayerProfile): CivilizationResult {
-    const government = this.pickGovernment(profile);
+  generate(profile: PlayerProfile, legacy?: ArchiveLegacy): CivilizationResult {
+    const government = this.pickGovernment(profile, legacy);
     const economy = this.pickEconomy(profile);
     const archetype = this.pickArchetype(profile);
     const culture = this.pickCulture(profile);
     const science = this.pickScience(profile);
     const military = this.pickMilitary(profile);
     const env = this.pickEnvironment(profile);
-    const media = this.pickMedia(profile);
-    const events = this.genEvents(profile, archetype);
+    const media = this.pickMedia(profile, legacy);
+    const events = this.genEvents(profile, archetype, legacy);
     const stability = this.calcStability(profile);
     const name = this.genName(archetype, government);
 
@@ -32,7 +32,15 @@ export class CivilizationGenerator {
     return { civilization: civ, archetype, stabilityScore: stability, summary: civ.summary, events };
   }
 
-  private pickGovernment(p: PlayerProfile): GovernmentType {
+  private pickGovernment(p: PlayerProfile, legacy?: ArchiveLegacy): GovernmentType {
+    // A civilization founded on memories that included undetected fabrications
+    // leans toward control structures that compensate for that uncertainty —
+    // either by hoarding interpretive authority (Archive Governance) or by
+    // suppressing the question of truth altogether (Authoritarian).
+    if (legacy && legacy.deceptionRate > 0.3) {
+      if (p.power >= 50) return GovernmentType.AUTHORITARIAN_STATE;
+      return GovernmentType.ARCHIVE_GOVERNANCE;
+    }
     if (p.truth >= 65 && p.progress >= 55) return GovernmentType.TECHNOCRACY;
     if (p.freedom >= 60 && p.compassion >= 50) return GovernmentType.DEMOCRACY;
     if (p.power >= 60 && p.freedom <= 35) return GovernmentType.AUTHORITARIAN_STATE;
@@ -90,20 +98,62 @@ export class CivilizationGenerator {
     return { policy: EnvironmentalPolicy.BALANCED, description: 'Environment and economy are balanced.' };
   }
 
-  private pickMedia(p: PlayerProfile): { state: MediaState; description: string } {
+  private pickMedia(p: PlayerProfile, legacy?: ArchiveLegacy): { state: MediaState; description: string } {
+    if (legacy && legacy.fabricatedPreserved.length + legacy.fabricatedDiscarded.length > 0) {
+      if (legacy.discernmentRate >= 0.7 && p.truth >= 55) {
+        return { state: MediaState.OPEN, description: 'A culture of rigorous verification emerged directly from the Archive\'s own near-misses with fabrication — this society checks its sources reflexively, almost anxiously.' };
+      }
+      if (legacy.discernmentRate <= 0.3) {
+        return { state: MediaState.CURATED, description: 'Unable to fully distinguish authentic memory from Archive fabrication, the founders chose to curate rather than question — accepting a managed, incomplete truth over an unbearable uncertainty.' };
+      }
+    }
     if (p.truth >= 65 && p.freedom >= 45) return { state: MediaState.OPEN, description: 'Media operates freely with strong truth standards.' };
     if (p.freedom >= 55) return { state: MediaState.INDEPENDENT, description: 'Media is independent of government.' };
     if (p.power >= 55) return { state: MediaState.PROPAGANDA, description: 'Media serves as state communication.' };
     return { state: MediaState.CURATED, description: 'Media is curated for accuracy.' };
   }
 
-  private genEvents(p: PlayerProfile, archetype: CivilizationArchetype): HistoricalEvent[] {
+  private genEvents(p: PlayerProfile, archetype: CivilizationArchetype, legacy?: ArchiveLegacy): HistoricalEvent[] {
     const events: HistoricalEvent[] = [
       { title: 'The Archive Preservation', year: 10, significance: 90, description: 'The new society established memory preservation as its founding mission.' },
     ];
-    if (p.progress >= 55) events.push({ title: 'The Great Reconstruction', year: 50, significance: 80, description: 'Ambitious reconstruction transformed society.' });
-    if (p.truth >= 55) events.push({ title: 'The Knowledge Renaissance', year: 100, significance: 75, description: 'A renaissance of knowledge and inquiry emerged.' });
-    if (p.compassion >= 55) events.push({ title: 'The Compassion Mandate', year: 40, significance: 75, description: 'Social welfare became a foundational institution.' });
+
+    // Real, chosen memories become the civilization's founding myths —
+    // each one a specific event the player actually decided to preserve,
+    // not a generic stat-gated placeholder.
+    if (legacy && legacy.definingMemories.length > 0) {
+      legacy.definingMemories.forEach((mem, i) => {
+        events.push({
+          title: mem.title,
+          year: 20 + i * 15,
+          significance: 95 - i * 5,
+          description: `Carried forward from the Archive's final selection: "${mem.summary}" This became one of the founding stories the new civilization told about itself.`,
+        });
+      });
+    } else {
+      if (p.progress >= 55) events.push({ title: 'The Great Reconstruction', year: 50, significance: 80, description: 'Ambitious reconstruction transformed society.' });
+      if (p.truth >= 55) events.push({ title: 'The Knowledge Renaissance', year: 100, significance: 75, description: 'A renaissance of knowledge and inquiry emerged.' });
+      if (p.compassion >= 55) events.push({ title: 'The Compassion Mandate', year: 40, significance: 75, description: 'Social welfare became a foundational institution.' });
+    }
+
+    // The fabrication discovery (or non-discovery) is itself a founding event
+    // when it happened, since it directly shapes the government/media choices.
+    if (legacy && legacy.fabricatedPreserved.length > 0) {
+      events.push({
+        title: 'The Inherited Lie',
+        year: 200,
+        significance: 85,
+        description: `Generations after the founding, scholars determined that "${legacy.fabricatedPreserved[0].title}" — long taught as settled history — had never occurred. The Archive had built it from a gap. By then, it had already shaped a civilization's sense of itself.`,
+      });
+    } else if (legacy && legacy.fabricatedDiscarded.length > 0) {
+      events.push({
+        title: 'The Discarded Deception',
+        year: 200,
+        significance: 60,
+        description: `A fragment now known to have been Archive-fabricated — "${legacy.fabricatedDiscarded[0].title}" — was correctly identified and excluded from the founding record before it could take root.`,
+      });
+    }
+
     return events.sort((a, b) => a.year - b.year);
   }
 

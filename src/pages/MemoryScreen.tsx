@@ -199,7 +199,7 @@ export default function MemoryScreen({ game }: { game: GameHook }) {
                 textTransform: 'uppercase',
                 letterSpacing: 1,
               }}>
-                ERA: {memory.era} • TRUTH LEVEL: {memory.truthScore}%
+                ERA: {memory.era} • TRUST LEVEL: {memory.truthScore}%
               </div>
             </div>
 

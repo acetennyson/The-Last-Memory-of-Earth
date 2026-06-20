@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { GameContent, Memory, PlayerProfile, CivilizationResult, HistoryBook, Evidence, Contradiction } from '../engine';
 import { GameEngine } from '../engine/GameEngine';
-import { createProfile, applyImpact } from '../engine';
 import { GameState, EvidenceSource, EvidenceTier } from '../engine/shared/enums';
 import { sampleContent, memoryConnections } from '../data/sampleContent';
 import { historicalContent } from '../data/historicalContent';
@@ -184,27 +183,10 @@ export function useGame() {
     if (next) {
       setMemory(next);
       setStage(GameState.MEMORY);
-      return;
-    }
-
-    const hasLocked = historicalContent.memories.some((m: any) =>
-      !updatedPreserved.has(m.id) && !updatedDiscarded.has(m.id)
-    );
-    if (hasLocked) {
-      let profile = createProfile();
-      for (const mem of historicalContent.memories) {
-        if (updatedPreserved.has(mem.id) && mem.impact) {
-          profile = applyImpact(profile, mem.impact);
-        }
-      }
-      (engine as any).session.profile = profile;
-      const result = engine.generateEnding();
-      setEnding(result);
-      setStage(GameState.ENDING);
     } else {
       setStage(GameState.ARCHIVE);
     }
-  }, [investigationCount, engine]);
+  }, [investigationCount]);
 
   const preserve = useCallback(() => {
     if (memory) {
