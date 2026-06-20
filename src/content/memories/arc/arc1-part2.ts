@@ -155,7 +155,7 @@ Despite thousands of reports and years of investigation, the identity of the wom
       power: -1,
       legacy: -3
     },
-    corruptionScore: 5,
+    corruptionScore: 1,
     truthScore: 15,
     investigationCost: 30,
     evidenceIds: ["ev_arc1_004_witnesses", "ev_arc1_004_reports", "ev_arc1_004_footage", "ev_arc1_004_security", "ev_arc1_004_official", "ev_arc1_004_classified"],
@@ -332,7 +332,7 @@ what exactly is memory?`,
       power: -2,
       legacy: 4
     },
-    corruptionScore: 1,
+    corruptionScore: 0,
     truthScore: 90,
     investigationCost: 35,
     evidenceIds: ["ev_arc1_005_research", "ev_arc1_005_studies", "ev_arc1_005_interviews", "ev_arc1_005_transcripts", "ev_arc1_005_drawings", "ev_arc1_005_artwork"],
@@ -395,7 +395,7 @@ The Hundred Thousand Witnesses
 An unidentified woman appeared in reports from more than one hundred thousand individuals worldwide.
 
 ### 2058
-The Children Who Remembered Tomorrow
+The Children Who Have false Memories
 
 Thousands of children described future events before they occurred.
 

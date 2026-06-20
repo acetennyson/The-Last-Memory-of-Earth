@@ -36,7 +36,7 @@ export const historicalContent: GameContent = {
     ...arc3Part1Memories,
     ...arc3Part2Memories,
     ...fabricatedBatch1Memories,
-  ],
+  ].sort((a, b) => parseInt(a.era) - parseInt(b.era)),
   
   evidence: [
     ...communicationEvidence,
