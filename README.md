@@ -1,4 +1,4 @@
-# THE LAST MEMORY OF EARTH
+# ARCHIVE: THE LAST HISTORIAN OF HUMANITY
 
 A narrative decision simulation game. You are the Last Archivist in humanity's final days — Earth is dying, and you must choose which memories to preserve for the civilizations that will follow.
 
